@@ -1,27 +1,28 @@
 ;===========================================================================================;
 ;+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++;
 ;																							;
-; Progres_v1.2 - first time writing code => Tuesday, 01 Mar 2022 - 10.44 WIB (17.44 UTC)    ;
+; Progres_v1.2 - first time writing code => Monday, 7 Mar 2022 - 13.49 WIB (20.44 UTC)		;
 ;																							;
 ;+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++;
 ;===========================================================================================;
 																							;
 ;===========================================================================================;
 ;;------------------------------------------------------------------------------------------:
-;	  Cold surge and cross equatorial surge identification : use function for conveniece	;
+;	  				Variable selection : use function for conveniece						;
 ;;------------------------------------------------------------------------------------------:
 ;===========================================================================================;
 
 begin
 
-;loadscript ("C:/cygwin/home/yothu/#OLAH/func/timesel.ncl")
-;loadscript ("C:/cygwin/home/yothu/#OLAH/func/varave.ncl")
+;----Function 1 : for timelag selection
 
 undef("timesel")
 function timesel(date)
 begin
   
+  print("========================")
   print("Starting function timesel")
+  print("")
   
   yyyy  = date/10000 
   mmdd  = date-yyyy*10000
@@ -92,32 +93,10 @@ begin
   lagp10  = datesel(date, yyyy, mm, dd, hh, sc, unitsp10, optdate)
   print("Nested-function timesel-datesel is done")	
   
-  ;--> Variable selection - tidak jadi karena ternyata tidak bisa
-  ;--> variabel var tidak ada di file f katanya
-  
-  ;varm10  = f->var({lagm10},:,:,:)
-  ;varm9   = f->var({lagm9},:,:,:)
-  ;varm8   = f->var({lagm8},:,:,:)
-  ;varm7   = f->var({lagm7},:,:,:)
-  ;varm6   = f->var({lagm6},:,:,:)
-  ;varm5   = f->var({lagm5},:,:,:)
-  ;varm4   = f->var({lagm4},:,:,:)
-  ;varm3   = f->var({lagm3},:,:,:)
-  ;varm2   = f->var({lagm2},:,:,:)
-  ;varm1   = f->var({lagm1},:,:,:)
-  ;var0    = f->var({lag0},:,:,:)
-  ;varp1   = f->var({lagp1},:,:,:)
-  ;varp2   = f->var({lagp2},:,:,:)
-  ;varp3   = f->var({lagp3},:,:,:)
-  ;varp4   = f->var({lagp4},:,:,:)
-  ;varp5   = f->var({lagp5},:,:,:)
-  ;varp6   = f->var({lagp6},:,:,:)
-  ;varp7   = f->var({lagp7},:,:,:)
-  ;varp8   = f->var({lagp8},:,:,:)
-  ;varp9   = f->var({lagp9},:,:,:)
-  ;varp10  = f->var({lagp10},:,:,:)
-  
+
+  print("")
   print("Function timesel is done")
+  print("========================")
   
   return ([/ lagm10, lagm9, lagm8, lagm7, lagm6, lagm5, lagm4, lagm3, lagm2, lagm1, \
            lag0, \
@@ -125,48 +104,166 @@ begin
 
 end
 
-undef ("t_merge")
-function t_merge(f, var, date, lag, nlag, nlev, nlat, nlon)
+
+;----Function 2 : for variable selection
+
+undef ("mergelag")
+function mergelag(f, var:string, varsample, date, lag, nlag, nlev, nlat, nlon)
 begin
-  print("Starting function t_merge")
+  print("========================")
+  print("Starting function mergelag")
+  print("")
   
   ntime    = dimsizes(date)
-  merge    = new((/nlag, ntime, nlev, nlat, nlon/), typeof(var), var@_FillValue)
-  tmergecp = new((/nlag, ntime, nlev, nlat, nlon/), typeof(var), var@_FillValue)
+
+  if var .eq. "u" then  ;--------------------------------------------------------------
+    ;--> Merge all lead-lag time
+    mergebeforeavg		= new((/nlag, ntime, nlev, nlat, nlon/), typeof(varsample), varsample@_FillValue)
+    mergebeforeavgcp	= new((/nlag, ntime, nlev, nlat, nlon/), typeof(varsample), varsample@_FillValue)  ;--> cp = copy
+    do i = 0, nlag-1
+      variabel                        = f->v({lag[i]},:,:,:) 				;-> dimsizesnya 32 x 27 x 141 x 121
+   	  mergebeforeavgcp(0:0,:,:,:,:)   = (/ variabel /)         				;-> dimsizesnya 32 x 27 x 141 x 121
+	  variabel                       := mergebeforeavgcp(0:0,:,:,:,:)  		;-> dimsizesnya 1 x 32 x 27 x 141 x 121
+	  mergebeforeavg(i,:,:,:,:)       = variabel
+    end do
+    ;--> Merge after averaging the second dimension (date for cs or cens)-------------------
+    mergeafteravg		= new((/ntime, nlev, nlat, nlon/), typeof(mergebeforeavg), mergebeforeavg@_FillValue)		;-> array baru untuk menyimpan variabel yg diproses -> time (date cs atau cens), level, lat, lon -> dimsizesnya 32 x 27 x 141 x 121
+    merge				= new((/ 21,27,141,121 /), typeof(mergebeforeavg), mergebeforeavg@_FillValue)			;-> array baru untuk menyimpan variabel output -> timelag, level, lat, lon
+    ;tratacppp			= tratacpp(:,0,:,:,:)												;-> reduksi dimensi, dimensi kedua nggak dipake karena ini yang dirata-ratakan [depreciated]
+    do i = 0, nlag-1 																		;-> looping untuk memasukkan variabel yang sudah dirata-rata
+	  mean						= dim_avg_n(mergebeforeavg(i,:,:,:,:), 0)   				;-> rata-ratakan tiap jeda waktu -> dimsizesnya 27 x 141 x 121
+	  mergeafteravg(0:0,:,:,:)	= (/ mean /)                     						 	;-> masukkan ke mergeafteravg kecuali untuk dimensi 0 (waktu) karena sudah dirata-ratakan semua
+	  mean						:= mergeafteravg(0:0,:,:,:)               					;-> ubah mean menjadi mergeafteravg untuk mendapatkan satu dimensi di dimensi 0 agar bisa dikumpulkan ke array terakhir -> dimsizesnya 1 x 27 x 144 x 121
+	  merge(i,:,:,:)			= mean
+    end do
+	
+  else if var .eq. "v" then  ;--------------------------------------------------------------
+    ;--> Merge all lead-lag time
+    mergebeforeavg		= new((/nlag, ntime, nlev, nlat, nlon/), typeof(varsample), varsample@_FillValue)
+    mergebeforeavgcp	= new((/nlag, ntime, nlev, nlat, nlon/), typeof(varsample), varsample@_FillValue)  ;--> cp = copy
+    do i = 0, nlag-1
+      variabel                        = f->v({lag[i]},:,:,:) 				;-> dimsizesnya 32 x 27 x 141 x 121
+   	  mergebeforeavgcp(0:0,:,:,:,:)   = (/ variabel /)         				;-> dimsizesnya 32 x 27 x 141 x 121
+	  variabel                       := mergebeforeavgcp(0:0,:,:,:,:)  		;-> dimsizesnya 1 x 32 x 27 x 141 x 121
+	  mergebeforeavg(i,:,:,:,:)       = variabel
+    end do
+    ;--> Merge after averaging the second dimension (date for cs or cens)-------------------
+    mergeafteravg		= new((/ntime, nlev, nlat, nlon/), typeof(mergebeforeavg), mergebeforeavg@_FillValue)		;-> array baru untuk menyimpan variabel yg diproses -> time (date cs atau cens), level, lat, lon -> dimsizesnya 32 x 27 x 141 x 121
+    merge				= new((/ 21,27,141,121 /), typeof(mergebeforeavg), mergebeforeavg@_FillValue)			;-> array baru untuk menyimpan variabel output -> timelag, level, lat, lon
+    ;tratacppp			= tratacpp(:,0,:,:,:)												;-> reduksi dimensi, dimensi kedua nggak dipake karena ini yang dirata-ratakan [depreciated]
+    do i = 0, nlag-1 																		;-> looping untuk memasukkan variabel yang sudah dirata-rata
+	  mean						= dim_avg_n(mergebeforeavg(i,:,:,:,:), 0)   				;-> rata-ratakan tiap jeda waktu -> dimsizesnya 27 x 141 x 121
+	  mergeafteravg(0:0,:,:,:)	= (/ mean /)                     						 	;-> masukkan ke mergeafteravg kecuali untuk dimensi 0 (waktu) karena sudah dirata-ratakan semua
+	  mean						:= mergeafteravg(0:0,:,:,:)               					;-> ubah mean menjadi mergeafteravg untuk mendapatkan satu dimensi di dimensi 0 agar bisa dikumpulkan ke array terakhir -> dimsizesnya 1 x 27 x 144 x 121
+	  merge(i,:,:,:)			= mean
+    end do
   
-  do i = 0, nlag-1
-    tmerge                = f->t({lag[i]},:,:,:) ;-> dimsizesnya 32 x 27 x 141 x 121
-	tmergecp(0:0,:,:,:,:) = (/ tmerge /)         ;-> dimsizesnya 32 x 27 x 141 x 121
-	tmerge               := tmergecp(0:0,:,:,:,:)  ;-> dimsizesnya 1 x 32 x 27 x 141 x 121
-	merge(i,:,:,:,:)      = tmerge
-  end do
+  else if var .eq. "t" then ;----------------------------------------------------------------
+    ;--> Merge all lead-lag time
+    mergebeforeavg		= new((/nlag, ntime, nlev, nlat, nlon/), typeof(varsample), varsample@_FillValue)
+    mergebeforeavgcp	= new((/nlag, ntime, nlev, nlat, nlon/), typeof(varsample), varsample@_FillValue)  ;--> cp = copy
+    do i = 0, nlag-1
+      variabel                        = f->t({lag[i]},:,:,:) 				;-> dimsizesnya 32 x 27 x 141 x 121
+   	  mergebeforeavgcp(0:0,:,:,:,:)   = (/ variabel /)         				;-> dimsizesnya 32 x 27 x 141 x 121
+	  variabel                       := mergebeforeavgcp(0:0,:,:,:,:)  		;-> dimsizesnya 1 x 32 x 27 x 141 x 121
+	  mergebeforeavg(i,:,:,:,:)       = variabel
+    end do
+    ;--> Merge after averaging the second dimension (date for cs or cens)-------------------
+    mergeafteravg		= new((/ntime, nlev, nlat, nlon/), typeof(mergebeforeavg), mergebeforeavg@_FillValue)		;-> array baru untuk menyimpan variabel yg diproses -> time (date cs atau cens), level, lat, lon -> dimsizesnya 32 x 27 x 141 x 121
+    merge				= new((/ 21,27,141,121 /), typeof(mergebeforeavg), mergebeforeavg@_FillValue)			;-> array baru untuk menyimpan variabel output -> timelag, level, lat, lon
+    ;tratacppp			= tratacpp(:,0,:,:,:)												;-> reduksi dimensi, dimensi kedua nggak dipake karena ini yang dirata-ratakan [depreciated]
+    do i = 0, nlag-1 																		;-> looping untuk memasukkan variabel yang sudah dirata-rata
+	  mean						= dim_avg_n(mergebeforeavg(i,:,:,:,:), 0)   				;-> rata-ratakan tiap jeda waktu -> dimsizesnya 27 x 141 x 121
+	  mergeafteravg(0:0,:,:,:)	= (/ mean /)                     						 	;-> masukkan ke mergeafteravg kecuali untuk dimensi 0 (waktu) karena sudah dirata-ratakan semua
+	  mean						:= mergeafteravg(0:0,:,:,:)               					;-> ubah mean menjadi mergeafteravg untuk mendapatkan satu dimensi di dimensi 0 agar bisa dikumpulkan ke array terakhir -> dimsizesnya 1 x 27 x 144 x 121
+	  merge(i,:,:,:)			= mean
+    end do
   
-  tratacp              = new((/ntime, nlev, nlat, nlon/), typeof(var), var@_FillValue)          ;-> dimsizesnya 32 x 27 x 141 x 121
-  tratacpp             = new(dimsizes(merge),typeof(merge)) ;-> buat array baru untuk seleksi variabel
-  tratacppp            = tratacpp(:,0,:,:,:)                                     ;-> reduksi dimensi, dimensi kedua nggak dipake
-  ;printVarSummary(tratacppp)
-  ;printMinMax(tratacppp,0)
+  else if var .eq. "q" then  ;--------------------------------------------------------------
+    ;--> Merge all lead-lag time
+    mergebeforeavg		= new((/nlag, ntime, nlev, nlat, nlon/), typeof(varsample), varsample@_FillValue)
+    mergebeforeavgcp	= new((/nlag, ntime, nlev, nlat, nlon/), typeof(varsample), varsample@_FillValue)  ;--> cp = copy
+    do i = 0, nlag-1
+      variabel                        = f->q({lag[i]},:,:,:) 				;-> dimsizesnya 32 x 27 x 141 x 121
+   	  mergebeforeavgcp(0:0,:,:,:,:)   = (/ variabel /)         				;-> dimsizesnya 32 x 27 x 141 x 121
+	  variabel                       := mergebeforeavgcp(0:0,:,:,:,:)  		;-> dimsizesnya 1 x 32 x 27 x 141 x 121
+	  mergebeforeavg(i,:,:,:,:)       = variabel
+    end do
+    ;--> Merge after averaging the second dimension (date for cs or cens)-------------------
+    mergeafteravg		= new((/ntime, nlev, nlat, nlon/), typeof(mergebeforeavg), mergebeforeavg@_FillValue)		;-> array baru untuk menyimpan variabel yg diproses -> time (date cs atau cens), level, lat, lon -> dimsizesnya 32 x 27 x 141 x 121
+    merge				= new((/ 21,27,141,121 /), typeof(mergebeforeavg), mergebeforeavg@_FillValue)			;-> array baru untuk menyimpan variabel output -> timelag, level, lat, lon
+    ;tratacppp			= tratacpp(:,0,:,:,:)												;-> reduksi dimensi, dimensi kedua nggak dipake karena ini yang dirata-ratakan [depreciated]
+    do i = 0, nlag-1 																		;-> looping untuk memasukkan variabel yang sudah dirata-rata
+	  mean						= dim_avg_n(mergebeforeavg(i,:,:,:,:), 0)   				;-> rata-ratakan tiap jeda waktu -> dimsizesnya 27 x 141 x 121
+	  mergeafteravg(0:0,:,:,:)	= (/ mean /)                     						 	;-> masukkan ke mergeafteravg kecuali untuk dimensi 0 (waktu) karena sudah dirata-ratakan semua
+	  mean						:= mergeafteravg(0:0,:,:,:)               					;-> ubah mean menjadi mergeafteravg untuk mendapatkan satu dimensi di dimensi 0 agar bisa dikumpulkan ke array terakhir -> dimsizesnya 1 x 27 x 144 x 121
+	  merge(i,:,:,:)			= mean
+    end do
+    
+  else if var .eq. "w" then  ;--------------------------------------------------------------
+    ;--> Merge all lead-lag time
+    mergebeforeavg		= new((/nlag, ntime, nlev, nlat, nlon/), typeof(varsample), varsample@_FillValue)
+    mergebeforeavgcp	= new((/nlag, ntime, nlev, nlat, nlon/), typeof(varsample), varsample@_FillValue)  ;--> cp = copy
+    do i = 0, nlag-1
+      variabel                        = f->w({lag[i]},:,:,:) 				;-> dimsizesnya 32 x 27 x 141 x 121
+   	  mergebeforeavgcp(0:0,:,:,:,:)   = (/ variabel /)         				;-> dimsizesnya 32 x 27 x 141 x 121
+	  variabel                       := mergebeforeavgcp(0:0,:,:,:,:)  		;-> dimsizesnya 1 x 32 x 27 x 141 x 121
+	  mergebeforeavg(i,:,:,:,:)       = variabel
+    end do
+    ;--> Merge after averaging the second dimension (date for cs or cens)-------------------
+    mergeafteravg		= new((/ntime, nlev, nlat, nlon/), typeof(mergebeforeavg), mergebeforeavg@_FillValue)		;-> array baru untuk menyimpan variabel yg diproses -> time (date cs atau cens), level, lat, lon -> dimsizesnya 32 x 27 x 141 x 121
+    merge				= new((/ 21,27,141,121 /), typeof(mergebeforeavg), mergebeforeavg@_FillValue)			;-> array baru untuk menyimpan variabel output -> timelag, level, lat, lon
+    ;tratacppp			= tratacpp(:,0,:,:,:)												;-> reduksi dimensi, dimensi kedua nggak dipake karena ini yang dirata-ratakan [depreciated]
+    do i = 0, nlag-1 																		;-> looping untuk memasukkan variabel yang sudah dirata-rata
+	  mean						= dim_avg_n(mergebeforeavg(i,:,:,:,:), 0)   				;-> rata-ratakan tiap jeda waktu -> dimsizesnya 27 x 141 x 121
+	  mergeafteravg(0:0,:,:,:)	= (/ mean /)                     						 	;-> masukkan ke mergeafteravg kecuali untuk dimensi 0 (waktu) karena sudah dirata-ratakan semua
+	  mean						:= mergeafteravg(0:0,:,:,:)               					;-> ubah mean menjadi mergeafteravg untuk mendapatkan satu dimensi di dimensi 0 agar bisa dikumpulkan ke array terakhir -> dimsizesnya 1 x 27 x 144 x 121
+	  merge(i,:,:,:)			= mean
+    end do
   
-  do i = 0, nlag-1 ;->looping untuk memasukkan variabel yang sudah dirata-rata
-	trata                = dim_avg_n(merge(i,:,:,:,:), 0) ;-> rata-ratakan tiap jeda waktu dimsizesnya 27 x 141 x 121
-	tratacp(0:0,:,:,:)   = (/ trata /)                      ;-> masukkan ke ratacp kecuali untuk dimensi 0 (waktu) karena sudah dirata-ratakan semua
-	trata               := tratacp(0:0,:,:,:)               ;-> ucah rata menjadi ratacp untuk mendapatkan satu dimensi di dimensi 0 agar bisa dikumpulkan ke array terakhir dimsizesnya 1 x 27 x 144 x 121
-	tratacppp(i,:,:,:)   = trata
-	;print(i)
-  end do
+  end if
+  end if
+  end if
+  end if
+  end if
   
-  delete(merge)
-  delete(tmerge)
-  delete(tmergecp)
-  delete(trata)
-  delete(tratacp)
-  delete(tratacpp)
+  print("")
+  print("Function mergelag is done")
+  print("========================")
   
-  print("Function t_merge is done")
-  
-  return (tratacppp)
+  return (merge)
 end
 
+
+undef("mean_clim")
+function mean_clim(f, var:string)
+begin
+  
+  if var .eq. "u" then
+    variabel = f->u
+	meanclim = dim_avg_n(variabel,0)
+  else if var .eq. "v" then
+    variable = f->v
+    meanclim = dim_avg_n(variabel,0)
+  else if var .eq. "t" then
+    variable = f->v
+    meanclim = dim_avg_n(variabel,0)
+  else if var .eq. "q" then
+    variable = f->v
+    meanclim = dim_avg_n(variabel,0)
+  else if var .eq. "w" then
+    variable = f->v
+    meanclim = dim_avg_n(variabel,0)
+  end if
+  end if
+  end if
+  end if
+  end if
+  
+  return (meanclim)
+  
+end
+  
 ;===========================================================================================;
 ;;------------------------------------------------------------------------------------------;
 ;                                         MAIN CODE											;
@@ -196,121 +293,51 @@ end
 
 ;---Import file---
 
-  f        = addfile("daymean_20102020.nc","r" ) ; import file, "r" means just for "read"
-  var      = f->t(1,1,1,1)
+  f        = addfile("../data/daymean_20102020.nc","r" ) ; import file, "r" means just for "read"
+  
+  usample  = f->u(1,1,1,1)
+  vsample  = f->v(1,1,1,1)
+  tsample  = f->t(1,1,1,1)
+  qsample  = f->q(1,1,1,1)
+  wsample  = f->w(1,1,1,1)
   nlag     = 21
-  ;nlev     = dimsizes(f->level)     ;->27
-  ;nlat     = dimsizes(f->latitude)  ;->144
-  ;nlon     = dimsizes(f->longitude) ;->121
+  nlev     = dimsizes(f->level)     ;->27
+  nlat     = dimsizes(f->latitude)  ;->144
+  nlon     = dimsizes(f->longitude) ;->121
   lagcs    = timesel(datecs)
-  tcsall   = t_merge(f, var, datecs, lagcs, nlag, 27, 141, 121)
-  printVarSummary(tcsall)
-  printMinMax(tcsall,0)
-  printVarSummary(tcsall(0,:,:,:))
-  printMinMax(tcsall(0,:,:,:),0)
-  printVarSummary(tcsall(1,:,:,:))
-  printMinMax(tcsall(1,:,:,:),0)
+  lagcens  = timesel(datecens)
+  
+  ;uclim    = mean_clim(f, "u")
+  ;vclim    = mean_clim(f, "v")
+  ;tclim    = mean_clim(f, "t")
+  ;qclim    = mean_clim(f, "q")
+  ;wclim    = mean_clim(f, "w")
+  ;printVarSummary(uclim)
+  ;printVarSummary(vclim)
+  ;printVarSummary(tclim)
+  ;printVarSummary(qclim)
+  ;printVarSummary(wclim)
+  
+  ucs      = mergelag(f, "u", usample, datecs, lagcs, nlag, nlev, nlat, nlon)
+  vcs      = mergelag(f, "v", vsample, datecs, lagcs, nlag, nlev, nlat, nlon)
+  tcs      = mergelag(f, "t", tsample, datecs, lagcs, nlag, nlev, nlat, nlon)
+  qcs      = mergelag(f, "q", qsample, datecs, lagcs, nlag, nlev, nlat, nlon)
+  wcs      = mergelag(f, "w", wsample, datecs, lagcs, nlag, nlev, nlat, nlon)
+  printVarSummary(ucs)
+  printVarSummary(vcs)
+  printVarSummary(tcs)
+  printVarSummary(qcs)
+  printVarSummary(wcs)
+  
+  ucens      = mergelag(f, "u", usample, datecens, lagcens, nlag, nlev, nlat, nlon)
+  vcens      = mergelag(f, "v", vsample, datecens, lagcens, nlag, nlev, nlat, nlon)
+  tcens      = mergelag(f, "t", tsample, datecens, lagcens, nlag, nlev, nlat, nlon)
+  qcens      = mergelag(f, "q", qsample, datecens, lagcens, nlag, nlev, nlat, nlon)
+  wcens      = mergelag(f, "w", wsample, datecens, lagcens, nlag, nlev, nlat, nlon)
+  printVarSummary(ucens)
+  printVarSummary(vcens)
+  printVarSummary(tcens)
+  printVarSummary(qcens)
+  printVarSummary(wcens)
   
 end
-
-;===============================================================================================================
-;===============================================================================================================
-;===============================================================================================================
-;===============================================================================================================
-
-  ;do i = 0, nlag-1
-  ;  tcs = f->t({lagcs[i]},:,:,:)
-	
-  ;ratacp              = new(dimsizes(tcs0),typeof(tcs0),tcs0@_FillValue)  ;-> 23 x 27 x 144 x 121
-  ;ratacpp             = new(dimsizes(tcsall),typeof(tcsall),tcsall@_FillValue) ;-> buat array baru untuk seleksi variabel
-  ;ratacppp            = ratacpp(:,0,:,:,:)  	
-  ;do i = 0, n-1
-	;rata                = dim_avg_n(tcsall(i,:,:,:,:), 0) ;-> rata-ratakan tiap jeda waktu
-	;ratacp(0:0,:,:,:)   = (/ rata /)                      ;-> masukkan ke ratacp kecuali untuk dimensi 0 (waktu) karena sudah dirata-ratakan semua
-	;rata               := ratacp(0:0,:,:,:)               ;-> ucah rata menjadi ratacp untuk mendapatkan satu dimensi di dimensi 0 agar bisa dikumpulkan ke array terakhir
-	;ratacppp(i,:,:,:)   = rata
-	;printVarSummary(rata)
-  ;end do
-  
-  ;lagcs  = timesel(datecs)
-  ;tcsm10  = f->t({lagcs[0]},:,:,:) ;-> dimensinya = 32 x 27 x 
-  ;tcsm9   = f->t({lagcs[1]},:,:,:)
-  ;tcsm8   = f->t({lagcs[2]},:,:,:)
-  ;tcsm7   = f->t({lagcs[3]},:,:,:)
-  ;tcsm6   = f->t({lagcs[4]},:,:,:)
-  ;tcsm5   = f->t({lagcs[5]},:,:,:)
-  ;tcsm4   = f->t({lagcs[6]},:,:,:)
-  ;tcsm3   = f->t({lagcs[7]},:,:,:)
-  ;tcsm2   = f->t({lagcs[8]},:,:,:)
-  ;tcsm1   = f->t({lagcs[9]},:,:,:)
-  ;tcs0    = f->t({lagcs[10]},:,:,:)
-  ;tcsp1   = f->t({lagcs[11]},:,:,:)
-  ;tcsp2   = f->t({lagcs[12]},:,:,:)
-  ;tcsp3   = f->t({lagcs[13]},:,:,:)
-  ;tcsp4   = f->t({lagcs[14]},:,:,:)
-  ;tcsp5   = f->t({lagcs[15]},:,:,:)
-  ;tcsp6   = f->t({lagcs[16]},:,:,:)
-  ;tcsp7   = f->t({lagcs[17]},:,:,:)
-  ;tcsp8   = f->t({lagcs[18]},:,:,:)
-  ;tcsp9   = f->t({lagcs[19]},:,:,:)
-  ;tcsp10  = f->t({lagcs[20]},:,:,:)
-  ;tcsall  = (/ tcsm10, tcsm9, tcsm8, tcsm7, tcsm6, tcsm5, tcsm4, tcsm3, tcsm2, tcsm1, \
-  ;           tcs0, \
-  ;			 tcsp1, tcsp2, tcsp3, tcsp4, tcsp5, tcsp6, tcsp7, tcsp8, tcsp9, tcsp10 /)
-  ;delete (tcsm10, tcsm9, tcsm8, tcsm7, tcsm6, tcsm5, tcsm4, tcsm3, tcsm2, tcsm1, \
-  ;          tcs0, \
-  ;			 tcsp1, tcsp2, tcsp3, tcsp4, tcsp5, tcsp6, tcsp7, tcsp8, tcsp9, tcsp10)
-  
-  ;tcs0!0    = "time"
-  ;tcs0&time = tcs0 
-  
-  ;tcsall  = (/ tcsm1, tcs0, tcsp1 /)
-  
-  ;copy_VarCoords(tcsall, tcs0)
-  ;tcsall!0 = "lag"
-  ;tcsall!1 = "time"
-  ;tcsall!2 = "level"
-  ;tcsall!3 = "latitude"
-  ;tcsall!4 = "longitude"
-  
-  ;printVarSummary(tcs0)
-  ;printVarSummary(tcsall)
-  ;print("" +"indeks"+  "   " +"lead1"+ "     " +"h0" + "        " +"lag1"+ " ")
-  ;print(" " +tcsall(0,:,0:0,0:0,0:0)+ "   " +tcsall(1,:,0:0,0:0,0:0)+ "   " +tcsall(2,:,0:0,0:0,0:0)+ " ")
-  
-  ;tcs     = varave(tcsall)
-  ;printVarSummary(tcs)
-
-  
-  ;h0 = dim_avg_n(tcsall(0,:,:,:,:),0)
-  ;printVarSummary(h0)
-  
-  ;printVarSummary(tcsall)
-  ;printVarSummary(tcsall(0,:,:,:,:))
-  
-  ;timeall  = ind(f->time)
-  ;time2  = cd_calendar(time1,-2) ;-2 for integer, positif for double
-  ;print("" +time1+ "  " +time2+ "")
-  ;ntime  = dimsizes(time2)
-  ;yrfrac = yyyymmdd_to_yyyyfrac(time(:),0) ; masih jadi masalah karena datanya periodik november-maret aja
-  ;printVarSummary(timeall)
-  ;print(timeall)
-  
-  ;timedatacs   = f->time({timecs})
-  ;timedatacsut = cd_calendar(timedatacs,-3)
-  ;timeindex = ind(timecsut)
-  ;print(timeindex)
-  ;print(" " +timeindex+ " " +timedatacs+ " " +timedatacsut+ " ")
-  
-  ;tcs    = f->t({timecs},:,:,:)
-  ;printVarSummary(tcs)
-    
-  ;printVarSummary(time)
-  ;print(" " +time1+ " " +time+ " " +yrfrac+ " ")
-  ;print(ntime)
-  
-  ;cs   = f->v(:,{925},{8:15},{110:116})
-  ;cens = f->v(:,{925},{-5:0},{105:110})
-
-  ;indekscs   = index(time,ntime,cs,-8,1)
-  ;indekscens = index(time,ntime,cens,-5,0)
