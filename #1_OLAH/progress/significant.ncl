@@ -24,8 +24,6 @@ begin
     pval@long_name  = "probability"
     copy_VarCoords(xavg,pval)
     diff            = xavg - yavg
-    diff!0          = "lat"
-    diff!1          = "lon"
     diff@long_name  = "difference of the means"
     copy_VarCoords(xavg,diff)
 
@@ -191,8 +189,9 @@ begin
         yslhfavg      = new((/21, 141, 121/), typeof(ysshfavg_), ysshfavg_@_FillValue)
         yslhfvar      = new((/21, 141, 121/), typeof(ysshfavg_), ysshfavg_@_FillValue)
 
-        printVarSummary(ysshfavg_)
-        printVarSummary(ysshfavg)
+        ;printVarSummary(xsshfcsavg)
+        ;printVarSummary(ysshfavg_)
+        ;printVarSummary(ysshfavg)
 
         do i=0, 20
           ysshfavg(0:0,:,:) = (/ysshfavg_/)
@@ -229,31 +228,50 @@ begin
 
       fq1q21   = addfile(pathin+"var_YANAI_Q1Q2.nc","r")
       fq1q22   = addfile(pathin+"monmean_YANAI_Q1Q2.nc","r")
-      
+      time     = fq1q21->timelag
+      lev      = fq1q21->lev
+      lat      = fq1q21->lat
+      lon      = fq1q21->lon
+
       ;---Q/cp
 
         xq1percpcsavg   = doubletofloat(fq1q21->Q1percpcsmean(:,:,:,:))
         xq1percpcsvar   = doubletofloat(fq1q21->Q1percpcsvari(:,:,:,:))
         xq2percpcsavg   = doubletofloat(fq1q21->Q2percpcsmean(:,:,:,:))
         xq2percpcsvar   = doubletofloat(fq1q21->Q2percpcsvari(:,:,:,:))
+        xq1percpcsavg!0 = "timelag"
+        xq1percpcsavg!1 = "lev"
+        xq1percpcsavg!2 = "lat"
+        xq1percpcsavg!3 = "lon"
+        xq1percpcsavg&timelag = time
+        xq1percpcsavg&lev     = lev
+        xq1percpcsavg&lat     = lat
+        xq1percpcsavg&lon     = lon
+        copy_VarCoords(xq1percpcsavg, xq1percpcsvar)
+        copy_VarCoords(xq1percpcsavg, xq2percpcsavg)
+        copy_VarCoords(xq1percpcsavg, xq2percpcsvar)
 
-        xq1percpcensavg   = doubletofloat(fq1q21->Q1percpcensmean(:,:,:,:))
-        xq1percpcensvar   = doubletofloat(fq1q21->Q1percpcensvari(:,:,:,:))
-        xq2percpcensavg   = doubletofloat(fq1q21->Q2percpcensmean(:,:,:,:))
-        xq2percpcensvar   = doubletofloat(fq1q21->Q2percpcensvari(:,:,:,:))
+        xq1percpcensavg = doubletofloat(fq1q21->Q1percpcensmean(:,:,:,:))
+        xq1percpcensvar = doubletofloat(fq1q21->Q1percpcensvari(:,:,:,:))
+        xq2percpcensavg = doubletofloat(fq1q21->Q2percpcensmean(:,:,:,:))
+        xq2percpcensvar = doubletofloat(fq1q21->Q2percpcensvari(:,:,:,:))
+        copy_VarCoords(xq1percpcsavg, xq1percpcensavg)
+        copy_VarCoords(xq1percpcsavg, xq1percpcensvar)
+        copy_VarCoords(xq1percpcsavg, xq2percpcensavg)
+        copy_VarCoords(xq1percpcsavg, xq2percpcensvar)
 
-        yq1percpavg_   = dim_avg_n(fq1q22->Q1percp(:,:,:,:),0)
-        yq1percpvar_   = dim_variance_n(fq1q22->Q1percp(:,:,:,:),0)
-        yq2percpavg_   = dim_avg_n(fq1q22->Q2percp(:,:,:,:),0)
-        yq2percpvar_   = dim_variance_n(fq1q22->Q2percp(:,:,:,:),0)
+        yq1percpavg_    = dim_avg_n(fq1q22->Q1percp(:,:,:,:),0)
+        yq1percpvar_    = dim_variance_n(fq1q22->Q1percp(:,:,:,:),0)
+        yq2percpavg_    = dim_avg_n(fq1q22->Q2percp(:,:,:,:),0)
+        yq2percpvar_    = dim_variance_n(fq1q22->Q2percp(:,:,:,:),0)
 
-        yq1percpavg      = new((/21, 27, 141, 121/), typeof(yq1percpavg_), yq1percpavg_@_FillValue)
-        yq1percpvar      = new((/21, 27, 141, 121/), typeof(yq1percpavg_), yq1percpavg_@_FillValue)
-        yq2percpavg      = new((/21, 27, 141, 121/), typeof(yq1percpavg_), yq1percpavg_@_FillValue)
-        yq2percpvar      = new((/21, 27, 141, 121/), typeof(yq1percpavg_), yq1percpavg_@_FillValue)
+        yq1percpavg     = new((/21, 27, 141, 121/), typeof(yq1percpavg_), yq1percpavg_@_FillValue)
+        yq1percpvar     = new((/21, 27, 141, 121/), typeof(yq1percpavg_), yq1percpavg_@_FillValue)
+        yq2percpavg     = new((/21, 27, 141, 121/), typeof(yq1percpavg_), yq1percpavg_@_FillValue)
+        yq2percpvar     = new((/21, 27, 141, 121/), typeof(yq1percpavg_), yq1percpavg_@_FillValue)
 
-        printVarSummary(yq1percpavg_)
-        printVarSummary(yq1percpavg)
+        ;printVarSummary(yq1percpavg_)
+        ;printVarSummary(yq1percpavg)
 
         do i=0, 20
           yq1percpavg(0:0,:,:,:) = (/yq1percpavg_/)
@@ -279,23 +297,23 @@ begin
         xq2intcsavg   = doubletofloat(fq1q21->Q2intcsmean(:,:,:))
         xq2intcsvar   = doubletofloat(fq1q21->Q2intcsvari(:,:,:))
 
-        xq1intcensavg   = doubletofloat(fq1q21->Q1intcensmean(:,:,:))
-        xq1intcensvar   = doubletofloat(fq1q21->Q1intcensvari(:,:,:))
-        xq2intcensavg   = doubletofloat(fq1q21->Q2intcensmean(:,:,:))
-        xq2intcensvar   = doubletofloat(fq1q21->Q2intcensvari(:,:,:))
+        xq1intcensavg = doubletofloat(fq1q21->Q1intcensmean(:,:,:))
+        xq1intcensvar = doubletofloat(fq1q21->Q1intcensvari(:,:,:))
+        xq2intcensavg = doubletofloat(fq1q21->Q2intcensmean(:,:,:))
+        xq2intcensvar = doubletofloat(fq1q21->Q2intcensvari(:,:,:))
 
-        yq1intavg_   = dim_avg_n(fq1q22->Q1int(:,:,:),0)
-        yq1intvar_   = dim_variance_n(fq1q22->Q1int(:,:,:),0)
-        yq2intavg_   = dim_avg_n(fq1q22->Q2int(:,:,:),0)
-        yq2intvar_   = dim_variance_n(fq1q22->Q2int(:,:,:),0)
+        yq1intavg_    = dim_avg_n(fq1q22->Q1int(:,:,:),0)
+        yq1intvar_    = dim_variance_n(fq1q22->Q1int(:,:,:),0)
+        yq2intavg_    = dim_avg_n(fq1q22->Q2int(:,:,:),0)
+        yq2intvar_    = dim_variance_n(fq1q22->Q2int(:,:,:),0)
 
-        yq1intavg      = new((/21, 141, 121/), typeof(yq1intavg_), yq1intavg_@_FillValue)
-        yq1intvar      = new((/21, 141, 121/), typeof(yq1intavg_), yq1intavg_@_FillValue)
-        yq2intavg      = new((/21, 141, 121/), typeof(yq1intavg_), yq1intavg_@_FillValue)
-        yq2intvar      = new((/21, 141, 121/), typeof(yq1intavg_), yq1intavg_@_FillValue)
+        yq1intavg     = new((/21, 141, 121/), typeof(yq1intavg_), yq1intavg_@_FillValue)
+        yq1intvar     = new((/21, 141, 121/), typeof(yq1intavg_), yq1intavg_@_FillValue)
+        yq2intavg     = new((/21, 141, 121/), typeof(yq1intavg_), yq1intavg_@_FillValue)
+        yq2intvar     = new((/21, 141, 121/), typeof(yq1intavg_), yq1intavg_@_FillValue)
 
-        printVarSummary(yq1intavg_)
-        printVarSummary(yq1intavg)
+        ;printVarSummary(yq1intavg_)
+        ;printVarSummary(yq1intavg)
 
         do i=0, 20
           yq1intavg(0:0,:,:) = (/yq1intavg_/)
@@ -327,6 +345,14 @@ begin
         q2intcs      = signif(xq2intcsavg,xq2intcsvar,xncs,yq2intavg,yq2intvar,yn)
         q1intcens    = signif(xq1intcensavg,xq1intcensvar,xncens,yq1intavg,yq1intvar,yn)
         q2intcens    = signif(xq2intcensavg,xq2intcensvar,xncens,yq2intavg,yq2intvar,yn)
+
+        printVarSummary(xq1percpcsavg)
+        printVarSummary(q1percpcs[0])
+        printVarSummary(q1percpcs[1])
+        printVarSummary(q1percpcs[2])
+        printVarSummary(q1percpcens[0])
+        printVarSummary(q1percpcens[1])
+        printVarSummary(q1percpcens[2])
 
     end if
 
@@ -592,7 +618,7 @@ begin
       ncdf->slhfcenspval = slhfcens[2]
 
       ncdf->q1percpcsmean   = q1percpcs[0]
-      ;ncdf->q1percpcsdiff   = q1percpcs[1]
+      ncdf->q1percpcsdiff   = q1percpcs[1]
       ncdf->q1percpcspval   = q1percpcs[2]
       ncdf->q1percpcensmean = q1percpcens[0]
       ncdf->q1percpcensdiff = q1percpcens[1]
