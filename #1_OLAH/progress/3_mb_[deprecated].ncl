@@ -124,7 +124,7 @@ begin
       copy_VarCoords(q(:,0,:,:),pwdt)
       pwdt@long_name  = "Precipitable water tendency"
       pwdt@units      = "(kg/m**2)/s"
-      pwdt@info       = "Term 1 in moisture budget eq."    
+      pwdt@info       = "Term 1 in moisture budget eq."
       
       delete(pw)
       
@@ -176,7 +176,7 @@ begin
     print("========================")
 
     return( [/dqdt, pwdt, uq, vq, iuq, ivq, mfd, vimfd, dwq, idwq/] )
-    
+
   end
 
   ;===========================================================================================;
@@ -193,35 +193,35 @@ begin
     fmean   = addfile(diri+"clim_mean_pressurelevel.nc","r")
     fvari   = addfile(diri+"clim_vari_pressurelevel.nc","r")
                                                                 ; convenience: make all:  S->N
-    wcsmean     = f->wcsmean(:,:,::-1,:)                                ; Pascal/s
-    ucsmean     = f->ucsmean(:,:,::-1,:)                                ; m/s
-    vcsmean     = f->vcsmean(:,:,::-1,:)                                ; m/s
-    qcsmean     = f->qcsmean(:,:,::-1,:)                                ; kg/kg
+    wcsmean     = f->wcsmean(:,::-1,::-1,:)                                ; Pascal/s
+    ucsmean     = f->ucsmean(:,::-1,::-1,:)                                ; m/s
+    vcsmean     = f->vcsmean(:,::-1,::-1,:)                                ; m/s
+    qcsmean     = f->qcsmean(:,::-1,::-1,:)                                ; kg/kg
 
-    wcensmean   = f->wcensmean(:,:,::-1,:)
-    ucensmean   = f->ucensmean(:,:,::-1,:)
-    vcensmean   = f->vcensmean(:,:,::-1,:)
-    qcensmean   = f->qcensmean(:,:,::-1,:)
+    wcensmean   = f->wcensmean(:,::-1,::-1,:)
+    ucensmean   = f->ucensmean(:,::-1,::-1,:)
+    vcensmean   = f->vcensmean(:,::-1,::-1,:)
+    qcensmean   = f->qcensmean(:,::-1,::-1,:)
 
-    wcsvari     = f->wcsvari(:,:,::-1,:)                                ; Pascal/s
-    ucsvari     = f->ucsvari(:,:,::-1,:)                                ; m/s
-    vcsvari     = f->vcsvari(:,:,::-1,:)                                ; m/s
-    qcsvari     = f->qcsvari(:,:,::-1,:)                                ; kg/kg
+    wcsvari     = f->wcsvari(:,::-1,::-1,:)                                ; Pascal/s
+    ucsvari     = f->ucsvari(:,::-1,::-1,:)                                ; m/s
+    vcsvari     = f->vcsvari(:,::-1,::-1,:)                                ; m/s
+    qcsvari     = f->qcsvari(:,::-1,::-1,:)                                ; kg/kg
 
-    wcensvari   = f->wcensvari(:,:,::-1,:)
-    ucensvari   = f->ucensvari(:,:,::-1,:)
-    vcensvari   = f->vcensvari(:,:,::-1,:)
-    qcensvari   = f->qcensvari(:,:,::-1,:)
+    wcensvari   = f->wcensvari(:,::-1,::-1,:)
+    ucensvari   = f->ucensvari(:,::-1,::-1,:)
+    vcensvari   = f->vcensvari(:,::-1,::-1,:)
+    qcensvari   = f->qcensvari(:,::-1,::-1,:)
 
-    wmean   = fmean->w(:,:,::-1,:)
-    umean   = fmean->u(:,:,::-1,:)
-    vmean   = fmean->v(:,:,::-1,:)
-    qmean   = fmean->q(:,:,::-1,:) 
+    wmean   = fmean->w(:,::-1,::-1,:)
+    umean   = fmean->u(:,::-1,::-1,:)
+    vmean   = fmean->v(:,::-1,::-1,:)
+    qmean   = fmean->q(:,::-1,::-1,:) 
 
-    wvari   = fvari->w(:,:,::-1,:)
-    uvari   = fvari->u(:,:,::-1,:)
-    vvari   = fvari->v(:,:,::-1,:)
-    qvari   = fvari->q(:,:,::-1,:) 
+    wvari   = fvari->w(:,::-1,::-1,:)
+    uvari   = fvari->u(:,::-1,::-1,:)
+    vvari   = fvari->v(:,::-1,::-1,:)
+    qvari   = fvari->q(:,::-1,::-1,:) 
 
     lat     = f->lat
     lon     = f->lon
@@ -257,6 +257,7 @@ begin
     ;print("---")
     
   ;++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  ;---Running function
 
     npr         = 1            ; number of dimension level
     opt         = True
@@ -320,7 +321,7 @@ begin
     
     end if
 
-  ;--- For meanvariclim
+  ;---For meanvariclim
 
     if (MeanVari)
       var           = "Mean Clim"

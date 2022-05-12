@@ -10,9 +10,9 @@
 begin                                                                                       ;
 
   start = systemfunc("date")
-  print(start)                                                                                            ;
-  start_read_time = get_cpu_time()                                                          ;
-                                                                                            ;
+  print(start)
+  start_read_time = get_cpu_time()
+
   ;===========================================================================================;
   ;;------------------------------------------------------------------------------------------:
   ;           Variable selection : use function for conveniece                                ;

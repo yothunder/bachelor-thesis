@@ -2,7 +2,7 @@
 ;+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++;
 ;                                                                                           ;
 ; Start code => Monday, 25 Apr 2022 - 16.32 WIB (09.32 UTC)                                 ;
-; Last time saved => Tuesday, 26 April 2022 - 20.57 WIB
+; Last time saved => Sunday, 24 April 2022 - 20.37 WIB
 ;                                                                                           ;
 ;+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++;
 ;===========================================================================================;
@@ -250,6 +250,14 @@ begin
         copy_VarCoords(xq1percpcsavg, xq1percpcsvar)
         copy_VarCoords(xq1percpcsavg, xq2percpcsavg)
         copy_VarCoords(xq1percpcsavg, xq2percpcsvar)
+        xq1percpcsavg@long_name = "Mean: Apparent Heat Source / heating rate for CS"
+        xq1percpcsavg@units = "K/day"
+        xq2percpcsavg@long_name = "Mean: Apparent Moisture Sink / drying rate for CS"
+        xq2percpcsavg@units = "K/day"
+        xq1percpcsvar@long_name = "Variance: Apparent Heat Source / heating rate for CS"
+        xq1percpcsvar@units = "K/day"
+        xq2percpcsvar@long_name = "Variance: Apparent Moisture Sink / drying rate for CS"
+        xq2percpcsvar@units = "K/day"
 
         xq1percpcensavg = doubletofloat(fq1q21->Q1percpcensmean(:,:,:,:))
         xq1percpcensvar = doubletofloat(fq1q21->Q1percpcensvari(:,:,:,:))
@@ -259,6 +267,15 @@ begin
         copy_VarCoords(xq1percpcsavg, xq1percpcensvar)
         copy_VarCoords(xq1percpcsavg, xq2percpcensavg)
         copy_VarCoords(xq1percpcsavg, xq2percpcensvar)
+
+        xq1percpcensavg@long_name = "Mean: Apparent Heat Source / heating rate for CENS"
+        xq1percpcensavg@units = "K/day"
+        xq2percpcensavg@long_name = "Mean: Apparent Moisture Sink / drying rate for CENS"
+        xq2percpcensavg@units = "K/day"
+        xq1percpcensvar@long_name = "Variance: Apparent Heat Source / heating rate for CENS"
+        xq1percpcensvar@units = "K/day"
+        xq2percpcensvar@long_name = "Variance: Apparent Moisture Sink / drying rate for CENS"
+        xq2percpcensvar@units = "K/day"
 
         yq1percpavg_    = dim_avg_n(fq1q22->Q1percp(:,:,:,:),0)
         yq1percpvar_    = dim_variance_n(fq1q22->Q1percp(:,:,:,:),0)
@@ -296,11 +313,40 @@ begin
         xq1intcsvar   = doubletofloat(fq1q21->Q1intcsvari(:,:,:))
         xq2intcsavg   = doubletofloat(fq1q21->Q2intcsmean(:,:,:))
         xq2intcsvar   = doubletofloat(fq1q21->Q2intcsvari(:,:,:))
+        xq1intcsavg!0 = "timelag"
+        xq1intcsavg!1 = "lat"
+        xq1intcsavg!2 = "lon"
+        xq1intcsavg&timelag = time
+        xq1intcsavg&lat     = lat
+        xq1intcsavg&lon     = lon
+        copy_VarCoords(xq1intcsavg, xq1intcsvar)
+        copy_VarCoords(xq1intcsavg, xq2intcsavg)
+        copy_VarCoords(xq1intcsavg, xq2intcsvar)
+        xq1intcsavg@long_name = "Mean: Apparent Heat Source - vertically integrated for CS"
+        xq1intcsavg@units = "W.m**-2"
+        xq2intcsavg@long_name = "Mean: Apparent Moisture Sink - vertically integrated for CS"
+        xq2intcsavg@units = "W.m**-2"
+        xq1intcsvar@long_name = "Variance: Apparent Heat Source - vertically integrated for CS"
+        xq1intcsvar@units = "W.m**-2"
+        xq2intcsvar@long_name = "Variance: Apparent Moisture Sink - vertically integrated for CS"
+        xq2intcsvar@units = "W.m**-2"
 
         xq1intcensavg = doubletofloat(fq1q21->Q1intcensmean(:,:,:))
         xq1intcensvar = doubletofloat(fq1q21->Q1intcensvari(:,:,:))
         xq2intcensavg = doubletofloat(fq1q21->Q2intcensmean(:,:,:))
         xq2intcensvar = doubletofloat(fq1q21->Q2intcensvari(:,:,:))
+        copy_VarCoords(xq1intcsavg, xq1intcensavg)
+        copy_VarCoords(xq1intcsavg, xq1intcensvar)
+        copy_VarCoords(xq1intcsavg, xq2intcensavg)
+        copy_VarCoords(xq1intcsavg, xq2intcensvar)
+        xq1intcensavg@long_name = "Mean: Apparent Heat Source - vertically integrated for CENS"
+        xq1intcensavg@units = "W.m**-2"
+        xq2intcensavg@long_name = "Mean: Apparent Moisture Sink - vertically integrated for CENS"
+        xq2intcensavg@units = "W.m**-2"
+        xq1intcensvar@long_name = "Variance: Apparent Heat Source - vertically integrated for CENS"
+        xq1intcensvar@units = "W.m**-2"
+        xq2intcensvar@long_name = "Variance: Apparent Moisture Sink - vertically integrated for CENS"
+        xq2intcensvar@units = "W.m**-2"
 
         yq1intavg_    = dim_avg_n(fq1q22->Q1int(:,:,:),0)
         yq1intvar_    = dim_variance_n(fq1q22->Q1int(:,:,:),0)
@@ -390,8 +436,8 @@ begin
       ytpavg      = new((/21, 141, 121/), typeof(yeavg_), yeavg_@_FillValue)
       ytpvar      = new((/21, 141, 121/), typeof(yeavg_), yeavg_@_FillValue)
 
-      printVarSummary(yeavg_)
-      printVarSummary(yeavg)
+      ;printVarSummary(yeavg_)
+      ;printVarSummary(yeavg)
 
       do i=0, 20
         yeavg(0:0,:,:)  = (/yeavg_/)
@@ -424,8 +470,8 @@ begin
       ypwdtavg       = new((/21, 141, 121/), typeof(ypwdtavg_), ypwdtavg_@_FillValue)
       ypwdtvar       = new((/21, 141, 121/), typeof(ypwdtavg_), ypwdtavg_@_FillValue)
 
-      printVarSummary(ypwdtavg_)
-      printVarSummary(ypwdtavg)
+      ;printVarSummary(ypwdtavg_)
+      ;printVarSummary(ypwdtavg)
 
       do i=0, 20
         ypwdtavg(0:0,:,:)  = (/ypwdtavg_/)
@@ -440,42 +486,42 @@ begin
 
     ;---iuq_ivq : integrated moisture flux (zonal & meridional)
 
-      xiuqcsavg     = fsile1->ecsmean(:,:,:)
-      xiuqcsvar     = fsile1->ecsvari(:,:,:)
-      xivqcsavg    = fsile1->tpcsmean(:,:,:)
-      xivqcsvar    = fsile1->tpcsvari(:,:,:)
+      xiuqcsavg    = fmb1->iuqcsmean(:,:,:)
+      xiuqcsvar    = fmb1->iuqcsvari(:,:,:)
+      xivqcsavg    = fmb1->ivqcsmean(:,:,:)
+      xivqcsvar    = fmb1->ivqcsvari(:,:,:)
 
-      xiuqcensavg   = fsile1->ecensmean(:,:,:)
-      xiuqcensvar   = fsile1->ecensvari(:,:,:)
-      xivqcensavg  = fsile1->tpcensmean(:,:,:)
-      xivqcensvar  = fsile1->tpcensvari(:,:,:)
+      xiuqcensavg  = fmb1->iuqcensmean(:,:,:)
+      xiuqcensvar  = fmb1->iuqcensvari(:,:,:)
+      xivqcensavg  = fmb1->ivqcensmean(:,:,:)
+      xivqcensvar  = fmb1->ivqcensvari(:,:,:)
 
-      yiuqavg_      = dim_avg_n(fsile2->e(:,:,:),0)
-      yiuqvar_      = dim_variance_n(fsile2->e(:,:,:),0)
-      yivqavg_     = dim_avg_n(fsile2->tp(:,:,:),0)
-      yivqvar_     = dim_variance_n(fsile2->tp(:,:,:),0)
+      yiuqavg_     = dim_avg_n(fmb2->iuq(:,:,:),0)
+      yiuqvar_     = dim_variance_n(fmb2->iuq(:,:,:),0)
+      yivqavg_     = dim_avg_n(fmb2->ivq(:,:,:),0)
+      yivqvar_     = dim_variance_n(fmb2->ivq(:,:,:),0)
 
-      yiuqavg       = new((/21, 141, 121/), typeof(yiuqavg_), yiuqavg_@_FillValue)
-      yiuqvar       = new((/21, 141, 121/), typeof(yiuqavg_), yiuqavg_@_FillValue)
+      yiuqavg      = new((/21, 141, 121/), typeof(yiuqavg_), yiuqavg_@_FillValue)
+      yiuqvar      = new((/21, 141, 121/), typeof(yiuqavg_), yiuqavg_@_FillValue)
       yivqavg      = new((/21, 141, 121/), typeof(yiuqavg_), yiuqavg_@_FillValue)
       yivqvar      = new((/21, 141, 121/), typeof(yiuqavg_), yiuqavg_@_FillValue)
 
-      printVarSummary(yiuqavg_)
-      printVarSummary(yiuqavg)
+      ;printVarSummary(yiuqavg_)
+      ;printVarSummary(yiuqavg)
 
       do i=0, 20
-        yiuqavg(0:0,:,:)  = (/yiuqavg_/)
-        yiuqvar(0:0,:,:)  = (/yiuqvar_/)
+        yiuqavg(0:0,:,:) = (/yiuqavg_/)
+        yiuqvar(0:0,:,:) = (/yiuqvar_/)
         yivqavg(0:0,:,:) = (/yivqavg_/)
         yivqvar(0:0,:,:) = (/yivqvar_/)
 
-        yiuqavg_         := yiuqavg(0:0,:,:)
-        yiuqvar_         := yiuqvar(0:0,:,:)
+        yiuqavg_        := yiuqavg(0:0,:,:)
+        yiuqvar_        := yiuqvar(0:0,:,:)
         yivqavg_        := yivqavg(0:0,:,:)
         yivqvar_        := yivqvar(0:0,:,:)
 
-        yiuqavg(i,:,:)    = yiuqavg_
-        yiuqvar(i,:,:)    = yiuqvar_
+        yiuqavg(i,:,:)   = yiuqavg_
+        yiuqvar(i,:,:)   = yiuqvar_
         yivqavg(i,:,:)   = yivqavg_
         yivqvar(i,:,:)   = yivqvar_
       end do
@@ -494,8 +540,8 @@ begin
       yvimfdavg       = new((/21, 141, 121/), typeof(yvimfdavg_), yvimfdavg_@_FillValue)
       yvimfdvar       = new((/21, 141, 121/), typeof(yvimfdavg_), yvimfdavg_@_FillValue)
 
-      printVarSummary(yvimfdavg_)
-      printVarSummary(yvimfdavg)
+      ;printVarSummary(yvimfdavg_)
+      ;printVarSummary(yvimfdavg)
 
       do i=0, 20
         yvimfdavg(0:0,:,:)  = (/yvimfdavg_/)
@@ -529,6 +575,13 @@ begin
       ;--{del}.[iuq, ivq]
       vimfdcs      = signif(xvimfdcsavg,xvimfdcsvar,xncs,yvimfdavg,yvimfdvar,yn)
       vimfdcens    = signif(xvimfdcensavg,xvimfdcensvar,xncens,yvimfdavg,yvimfdvar,yn)
+
+      printVarSummary(iuqcs[0])
+      printVarSummary(iuqcs[1])
+      printVarSummary(iuqcs[2])
+      printVarSummary(ivqcs[0])
+      printVarSummary(ivqcs[1])
+      printVarSummary(ivqcs[2])
   end if
 
   ;===========================================================================================;

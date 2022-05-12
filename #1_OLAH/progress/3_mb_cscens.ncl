@@ -80,7 +80,7 @@ begin
       mfd                    = uv2dv_cfd(uq, vq, lat, lon, 2)              ; (time,level,lat,lon)
       copy_VarCoords(q, mfd)
       mfd@long_name          = "Horizontal Divergence of Moisture Flux"
-      mfd@units              = "(kg/kg*s)"                                 ; (1/m)*[(m/s)(g/kg)] => [g/(kg-s)]
+      mfd@units              = "(kg/kg*s)"                                 ; (1/m)*[(m/s)(kg/kg)] => [kg/(kg-s)]
 
     ;*******************************************
     ;---Vertical Divergence of moisture flux: uv2dvF => global 'fixed' rectilinear grid
@@ -130,11 +130,11 @@ begin
       
     ;-Vertically Integrated Horizontal Moisture flux
 
-      uq_dpg          = uq*dpgq                         ; mass weighted 'uq'; [m/s][g/kg][kg/m2]=>[m/s][g/kg]
+      uq_dpg          = uq*dpgq                         ; mass weighted 'uq'; [m/s][kg/kg][kg/m2]=>[m/s][g/kg]
       iuq             = dim_sum_n(uq_dpg, 1)
       iuq@long_name   = "Integrated Zonal UQ [uq*dpg]" 
       iuq@LONG_NAME   = "Sum: Mass Weighted Integrated Zonal Moisture Flux [uq*dpg]" 
-      iuq@units       = "[m/s][g/kg]"
+      iuq@units       = "[m/s][kg/kg]"
       copy_VarCoords(u(:,0,:,:), iuq)                ; (time,lat,lon)
       delete(uq_dpg)
 
@@ -142,7 +142,7 @@ begin
       ivq             = dim_sum_n(vq_dpg, 1)
       ivq@long_name   = "Integrated Meridional VQ [vq*dpg]" 
       ivq@LONG_NAME   = "Sum: Mass Weighted Integrated Meridional Moisture Flux [vq*dpg]" 
-      ivq@units       = "[m/s][g/kg]"
+      ivq@units       = "[m/s][kg/kg]"
       copy_VarCoords(v(:,0,:,:), ivq)                ; (time,lat,lon)
       delete(vq_dpg)
       
@@ -188,28 +188,28 @@ begin
 
   ;---Variable and file handling
 
-    diri    = "../data/"
+    diri    = "../data/#/"
     f       = addfile(diri+"varsel_pressurelevel.nc","r")      ; daily mean data
                                                                 ; convenience: make all:  S->N
-    wcsmean     = f->wcsmean(:,:,::-1,:)                                ; Pascal/s
-    ucsmean     = f->ucsmean(:,:,::-1,:)                                ; m/s
-    vcsmean     = f->vcsmean(:,:,::-1,:)                                ; m/s
-    qcsmean     = f->qcsmean(:,:,::-1,:)                                ; kg/kg
+    wcsmean     = f->wcsmean(:,::-1,::-1,:)                                ; Pascal/s
+    ucsmean     = f->ucsmean(:,::-1,::-1,:)                                ; m/s
+    vcsmean     = f->vcsmean(:,::-1,::-1,:)                                ; m/s
+    qcsmean     = f->qcsmean(:,::-1,::-1,:)                                ; kg/kg
 
-    wcensmean   = f->wcensmean(:,:,::-1,:)
-    ucensmean   = f->ucensmean(:,:,::-1,:)
-    vcensmean   = f->vcensmean(:,:,::-1,:)
-    qcensmean   = f->qcensmean(:,:,::-1,:)
+    wcensmean   = f->wcensmean(:,::-1,::-1,:)
+    ucensmean   = f->ucensmean(:,::-1,::-1,:)
+    vcensmean   = f->vcensmean(:,::-1,::-1,:)
+    qcensmean   = f->qcensmean(:,::-1,::-1,:)
 
-    wcsvari     = f->wcsvari(:,:,::-1,:)                                ; Pascal/s
-    ucsvari     = f->ucsvari(:,:,::-1,:)                                ; m/s
-    vcsvari     = f->vcsvari(:,:,::-1,:)                                ; m/s
-    qcsvari     = f->qcsvari(:,:,::-1,:)                                ; kg/kg
+    wcsvari     = f->wcsvari(:,::-1,::-1,:)                                ; Pascal/s
+    ucsvari     = f->ucsvari(:,::-1,::-1,:)                                ; m/s
+    vcsvari     = f->vcsvari(:,::-1,::-1,:)                                ; m/s
+    qcsvari     = f->qcsvari(:,::-1,::-1,:)                                ; kg/kg
 
-    wcensvari   = f->wcensvari(:,:,::-1,:)
-    ucensvari   = f->ucensvari(:,:,::-1,:)
-    vcensvari   = f->vcensvari(:,:,::-1,:)
-    qcensvari   = f->qcensvari(:,:,::-1,:)
+    wcensvari   = f->wcensvari(:,::-1,::-1,:)
+    ucensvari   = f->ucensvari(:,::-1,::-1,:)
+    vcensvari   = f->vcensvari(:,::-1,::-1,:)
+    qcensvari   = f->qcensvari(:,::-1,::-1,:)
 
     lat     = f->lat
     lon     = f->lon
