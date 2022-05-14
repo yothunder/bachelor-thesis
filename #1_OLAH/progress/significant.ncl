@@ -2,7 +2,7 @@
 ;+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++;
 ;                                                                                           ;
 ; Start code => Monday, 25 Apr 2022 - 16.32 WIB (09.32 UTC)                                 ;
-; Last time saved => Sunday, 24 April 2022 - 20.37 WIB
+; Last time saved => Sat, 14 May 2022 - 11.40 WIB
 ;                                                                                           ;
 ;+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++;
 ;===========================================================================================;
@@ -40,9 +40,9 @@ begin
 
     uv     = False
     sst    = False
-    hf     = True
-    q1q2   = True
-    mb     = False
+    hf     = False
+    q1q2   = False
+    mb     = True
     netCDF = True
 
     xncs   = 32
@@ -226,19 +226,20 @@ begin
 
     if (q1q2)
 
-      fq1q21   = addfile(pathin+"var_YANAI_Q1Q2.nc","r")
+      fq1q21cs   = addfile(pathin+"var_YANAI_Q1Q2_CS.nc","r")
+      fq1q21cens   = addfile(pathin+"var_YANAI_Q1Q2_CENS.nc","r")
       fq1q22   = addfile(pathin+"monmean_YANAI_Q1Q2.nc","r")
-      time     = fq1q21->timelag
-      lev      = fq1q21->lev
-      lat      = fq1q21->lat
-      lon      = fq1q21->lon
+      time     = fq1q21cs->timelag
+      lev      = fq1q21cs->lev
+      lat      = fq1q21cs->lat
+      lon      = fq1q21cs->lon
 
       ;---Q/cp
 
-        xq1percpcsavg   = doubletofloat(fq1q21->Q1percpcsmean(:,:,:,:))
-        xq1percpcsvar   = doubletofloat(fq1q21->Q1percpcsvari(:,:,:,:))
-        xq2percpcsavg   = doubletofloat(fq1q21->Q2percpcsmean(:,:,:,:))
-        xq2percpcsvar   = doubletofloat(fq1q21->Q2percpcsvari(:,:,:,:))
+        xq1percpcsavg   = doubletofloat(fq1q21cs->Q1percpcsmean(:,:,:,:))
+        xq1percpcsvar   = doubletofloat(fq1q21cs->Q1percpcsvari(:,:,:,:))
+        xq2percpcsavg   = doubletofloat(fq1q21cs->Q2percpcsmean(:,:,:,:))
+        xq2percpcsvar   = doubletofloat(fq1q21cs->Q2percpcsvari(:,:,:,:))
         xq1percpcsavg!0 = "timelag"
         xq1percpcsavg!1 = "lev"
         xq1percpcsavg!2 = "lat"
@@ -259,10 +260,10 @@ begin
         xq2percpcsvar@long_name = "Variance: Apparent Moisture Sink / drying rate for CS"
         xq2percpcsvar@units = "K/day"
 
-        xq1percpcensavg = doubletofloat(fq1q21->Q1percpcensmean(:,:,:,:))
-        xq1percpcensvar = doubletofloat(fq1q21->Q1percpcensvari(:,:,:,:))
-        xq2percpcensavg = doubletofloat(fq1q21->Q2percpcensmean(:,:,:,:))
-        xq2percpcensvar = doubletofloat(fq1q21->Q2percpcensvari(:,:,:,:))
+        xq1percpcensavg = doubletofloat(fq1q21cens->Q1percpcensmean(:,:,:,:))
+        xq1percpcensvar = doubletofloat(fq1q21cens->Q1percpcensvari(:,:,:,:))
+        xq2percpcensavg = doubletofloat(fq1q21cens->Q2percpcensmean(:,:,:,:))
+        xq2percpcensvar = doubletofloat(fq1q21cens->Q2percpcensvari(:,:,:,:))
         copy_VarCoords(xq1percpcsavg, xq1percpcensavg)
         copy_VarCoords(xq1percpcsavg, xq1percpcensvar)
         copy_VarCoords(xq1percpcsavg, xq2percpcensavg)
@@ -309,10 +310,10 @@ begin
 
       ;---<Q>
 
-        xq1intcsavg   = doubletofloat(fq1q21->Q1intcsmean(:,:,:))
-        xq1intcsvar   = doubletofloat(fq1q21->Q1intcsvari(:,:,:))
-        xq2intcsavg   = doubletofloat(fq1q21->Q2intcsmean(:,:,:))
-        xq2intcsvar   = doubletofloat(fq1q21->Q2intcsvari(:,:,:))
+        xq1intcsavg   = doubletofloat(fq1q21cs->Q1intcsmean(:,:,:))
+        xq1intcsvar   = doubletofloat(fq1q21cs->Q1intcsvari(:,:,:))
+        xq2intcsavg   = doubletofloat(fq1q21cs->Q2intcsmean(:,:,:))
+        xq2intcsvar   = doubletofloat(fq1q21cs->Q2intcsvari(:,:,:))
         xq1intcsavg!0 = "timelag"
         xq1intcsavg!1 = "lat"
         xq1intcsavg!2 = "lon"
@@ -331,10 +332,10 @@ begin
         xq2intcsvar@long_name = "Variance: Apparent Moisture Sink - vertically integrated for CS"
         xq2intcsvar@units = "W.m**-2"
 
-        xq1intcensavg = doubletofloat(fq1q21->Q1intcensmean(:,:,:))
-        xq1intcensvar = doubletofloat(fq1q21->Q1intcensvari(:,:,:))
-        xq2intcensavg = doubletofloat(fq1q21->Q2intcensmean(:,:,:))
-        xq2intcensvar = doubletofloat(fq1q21->Q2intcensvari(:,:,:))
+        xq1intcensavg = doubletofloat(fq1q21cens->Q1intcensmean(:,:,:))
+        xq1intcensvar = doubletofloat(fq1q21cens->Q1intcensvari(:,:,:))
+        xq2intcensavg = doubletofloat(fq1q21cens->Q2intcensmean(:,:,:))
+        xq2intcensvar = doubletofloat(fq1q21cens->Q2intcensvari(:,:,:))
         copy_VarCoords(xq1intcsavg, xq1intcensavg)
         copy_VarCoords(xq1intcsavg, xq1intcensvar)
         copy_VarCoords(xq1intcsavg, xq2intcensavg)
@@ -411,7 +412,8 @@ begin
     fsile1   = addfile(pathin+"varsel_singlelevel.nc","r")
     fsile2   = addfile(pathin+"monmean_singlelevel.nc","r")
 
-    fmb1   = addfile(pathin+"var_moisture_budget.nc","r")
+    fmb1cs   = addfile(pathin+"var_moisture_budget_cs.nc","r")
+    fmb1cens   = addfile(pathin+"var_moisture_budget_cens.nc","r")
     fmb2   = addfile(pathin+"monmean_moisture_budget.nc","r")
 
     ;---E-P
@@ -458,11 +460,11 @@ begin
 
     ;---d<q>/dt : Precipitable water tendency
 
-      xpwdtcsavg     = fmb1->pwdtcsmean(:,:,:)
-      xpwdtcsvar     = fmb1->pwdtcsvari(:,:,:)
+      xpwdtcsavg     = fmb1cs->pwdtcsmean(:,:,:)
+      xpwdtcsvar     = fmb1cs->pwdtcsvari(:,:,:)
 
-      xpwdtcensavg   = fmb1->pwdtcensmean(:,:,:)
-      xpwdtcensvar   = fmb1->pwdtcensvari(:,:,:)
+      xpwdtcensavg   = fmb1cens->pwdtcensmean(:,:,:)
+      xpwdtcensvar   = fmb1cens->pwdtcensvari(:,:,:)
 
       ypwdtavg_      = dim_avg_n(fmb2->pwdt(:,:,:),0)
       ypwdtvar_      = dim_variance_n(fmb2->pwdt(:,:,:),0)
@@ -486,15 +488,15 @@ begin
 
     ;---iuq_ivq : integrated moisture flux (zonal & meridional)
 
-      xiuqcsavg    = fmb1->iuqcsmean(:,:,:)
-      xiuqcsvar    = fmb1->iuqcsvari(:,:,:)
-      xivqcsavg    = fmb1->ivqcsmean(:,:,:)
-      xivqcsvar    = fmb1->ivqcsvari(:,:,:)
+      xiuqcsavg    = fmb1cs->iuqcsmean(:,:,:)
+      xiuqcsvar    = fmb1cs->iuqcsvari(:,:,:)
+      xivqcsavg    = fmb1cs->ivqcsmean(:,:,:)
+      xivqcsvar    = fmb1cs->ivqcsvari(:,:,:)
 
-      xiuqcensavg  = fmb1->iuqcensmean(:,:,:)
-      xiuqcensvar  = fmb1->iuqcensvari(:,:,:)
-      xivqcensavg  = fmb1->ivqcensmean(:,:,:)
-      xivqcensvar  = fmb1->ivqcensvari(:,:,:)
+      xiuqcensavg  = fmb1cens->iuqcensmean(:,:,:)
+      xiuqcensvar  = fmb1cens->iuqcensvari(:,:,:)
+      xivqcensavg  = fmb1cens->ivqcensmean(:,:,:)
+      xivqcensvar  = fmb1cens->ivqcensvari(:,:,:)
 
       yiuqavg_     = dim_avg_n(fmb2->iuq(:,:,:),0)
       yiuqvar_     = dim_variance_n(fmb2->iuq(:,:,:),0)
@@ -506,8 +508,19 @@ begin
       yivqavg      = new((/21, 141, 121/), typeof(yiuqavg_), yiuqavg_@_FillValue)
       yivqvar      = new((/21, 141, 121/), typeof(yiuqavg_), yiuqavg_@_FillValue)
 
-      ;printVarSummary(yiuqavg_)
-      ;printVarSummary(yiuqavg)
+      printMinMax(xiuqcsavg,0)
+      print("xiuqcsvar")
+      printMinMax(xiuqcsvar,0)
+      printMinMax(xivqcsavg,0)
+      print("xivqcsvar")
+      printMinMax(xivqcsvar,0)
+      printMinMax(xiuqcensavg,0)
+      print("xiuqcensvar")
+      printMinMax(xiuqcensvar,0)
+      printMinMax(xivqcensavg,0)
+      print("xivqcensvar")
+      printMinMax(xivqcensvar,0)
+      print(" ")
 
       do i=0, 20
         yiuqavg(0:0,:,:) = (/yiuqavg_/)
@@ -528,14 +541,21 @@ begin
 
     ;---{del}.[iuq, ivq] : Vertically Integrated Moisture flux divergence
 
-      xvimfdcsavg     = fmb1->vimfdcsmean(:,:,:)
-      xvimfdcsvar     = fmb1->vimfdcsvari(:,:,:)
+      xvimfdcsavg     = fmb1cs->vimfdcsmean(:,:,:)
+      xvimfdcsvar     = fmb1cs->vimfdcsvari(:,:,:)
 
-      xvimfdcensavg   = fmb1->vimfdcensmean(:,:,:)
-      xvimfdcensvar   = fmb1->vimfdcensvari(:,:,:)
+      xvimfdcensavg   = fmb1cens->vimfdcensmean(:,:,:)
+      xvimfdcensvar   = fmb1cens->vimfdcensvari(:,:,:)
 
       yvimfdavg_      = dim_avg_n(fmb2->vimfd(:,:,:),0)
       yvimfdvar_      = dim_variance_n(fmb2->vimfd(:,:,:),0)
+
+      printMinMax(xvimfdcsavg,0)
+      printMinMax(xvimfdcsvar,0)
+      printMinMax(xvimfdcensavg,0)
+      printMinMax(xvimfdcensvar,0)
+      printMinMax(yvimfdavg_,0)
+      printMinMax(yvimfdvar_,0)
 
       yvimfdavg       = new((/21, 141, 121/), typeof(yvimfdavg_), yvimfdavg_@_FillValue)
       yvimfdvar       = new((/21, 141, 121/), typeof(yvimfdavg_), yvimfdavg_@_FillValue)
@@ -557,31 +577,35 @@ begin
     ;---Calculate significance
 
       ;--E-P
+      print("SIGNIF E-P")
       ecs      = signif(xecsavg,xecsvar,xncs,yeavg,yevar,yn)
       tpcs     = signif(xtpcsavg,xtpcsvar,xncs,ytpavg,ytpvar,yn)
       ecens    = signif(xecensavg,xecensvar,xncens,yeavg,yevar,yn)
       tpcens   = signif(xtpcensavg,xtpcensvar,xncens,ytpavg,ytpvar,yn)
 
       ;--pwdt
+      print("SIGNIF PWDT")
       pwdtcs      = signif(xpwdtcsavg,xpwdtcsvar,xncs,ypwdtavg,ypwdtvar,yn)
       pwdtcens    = signif(xpwdtcensavg,xpwdtcensvar,xncens,ypwdtavg,ypwdtvar,yn)
 
       ;--iuq_ivq
+      print("SIGNIF IUQ_IVQ")
       iuqcs      = signif(xiuqcsavg,xiuqcsvar,xncs,yiuqavg,yiuqvar,yn)
       ivqcs      = signif(xivqcsavg,xivqcsvar,xncs,yivqavg,yivqvar,yn)
       iuqcens    = signif(xiuqcensavg,xiuqcensvar,xncens,yiuqavg,yiuqvar,yn)
       ivqcens    = signif(xivqcensavg,xivqcensvar,xncens,yivqavg,yivqvar,yn)
 
       ;--{del}.[iuq, ivq]
+      print("SIGNIF VIMFD")
       vimfdcs      = signif(xvimfdcsavg,xvimfdcsvar,xncs,yvimfdavg,yvimfdvar,yn)
       vimfdcens    = signif(xvimfdcensavg,xvimfdcensvar,xncens,yvimfdavg,yvimfdvar,yn)
 
-      printVarSummary(iuqcs[0])
-      printVarSummary(iuqcs[1])
-      printVarSummary(iuqcs[2])
-      printVarSummary(ivqcs[0])
-      printVarSummary(ivqcs[1])
-      printVarSummary(ivqcs[2])
+      ;printVarSummary(iuqcs[0])
+      ;printVarSummary(iuqcs[1])
+      ;printVarSummary(iuqcs[2])
+      ;printVarSummary(ivqcs[0])
+      ;printVarSummary(ivqcs[1])
+      ;printVarSummary(ivqcs[2])
   end if
 
   ;===========================================================================================;
