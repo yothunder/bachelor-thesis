@@ -2,7 +2,7 @@
 ;+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++;
 ;                                                                                           ;
 ; Start code => Sat, 14 May 2022 - 08.57 WIB
-; Last time saved => Sat, 14 May 2022 - 11.18 WIB
+; Last time saved => Sat, 14 May 2022 - 12.57 WIB
 ;                                                                                           ;
 ;+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++;
 ;===========================================================================================;
@@ -200,11 +200,9 @@
 
     CS          = False
     CENS        = True
-    netCDF      = False
+    netCDF      = True
     npr         = 1            ; number of dimension level
     opt         = True
-
-    ;---For CS
 
     if (CS)
 
@@ -314,13 +312,13 @@
       end do
       printVarSummary(mergeivqcsavg)
 
-      mergevimfdcsavg                    = new((/nlag, nlat, nlon/), typeof(ivqcsavg[0]), ivqcsavg[0]@_FillValue)
-      mergevimfdcsavgcp                  = new((/nlag, nlat, nlon/), typeof(ivqcsavg[0]), ivqcsavg[0]@_FillValue)
+      mergevimfdcsavg                    = new((/nlag, nlat, nlon/), typeof(vimfdcsavg[0]), vimfdcsavg[0]@_FillValue)
+      mergevimfdcsavgcp                  = new((/nlag, nlat, nlon/), typeof(vimfdcsavg[0]), vimfdcsavg[0]@_FillValue)
       do i = 0, 20
-        variabelivqcsavg                        = ivqcsavg[i]
-        mergevimfdcsavgcp(0:0,:,:)      = (/ variabelivqcsavg /)
-        variabelivqcsavg                       := mergevimfdcsavgcp(0:0,:,:)
-        mergeivqcsavg(i,:,:)          = variabelivqcsavg
+        variabelvimfdcsavg                        = vimfdcsavg[i]
+        mergevimfdcsavgcp(0:0,:,:)      = (/ variabelvimfdcsavg /)
+        variabelvimfdcsavg                       := mergevimfdcsavgcp(0:0,:,:)
+        mergevimfdcsavg(i,:,:)          = variabelvimfdcsavg
       end do
       printVarSummary(mergevimfdcsavg)
 
@@ -354,13 +352,13 @@
       end do
       printVarSummary(mergeivqcsvar)
 
-      mergevimfdcsvar                    = new((/nlag, nlat, nlon/), typeof(ivqcsvar[0]), ivqcsvar[0]@_FillValue)
-      mergevimfdcsvarcp                  = new((/nlag, nlat, nlon/), typeof(ivqcsvar[0]), ivqcsvar[0]@_FillValue)
+      mergevimfdcsvar                    = new((/nlag, nlat, nlon/), typeof(vimfdcsvar[0]), vimfdcsvar[0]@_FillValue)
+      mergevimfdcsvarcp                  = new((/nlag, nlat, nlon/), typeof(vimfdcsvar[0]), vimfdcsvar[0]@_FillValue)
       do i = 0, 20
-        variabelivqcsvar                        = ivqcsvar[i]
-        mergevimfdcsvarcp(0:0,:,:)      = (/ variabelivqcsvar /)
-        variabelivqcsvar                       := mergevimfdcsvarcp(0:0,:,:)
-        mergeivqcsvar(i,:,:)          = variabelivqcsvar
+        variabelvimfdcsvar                        = vimfdcsvar[i]
+        mergevimfdcsvarcp(0:0,:,:)      = (/ variabelvimfdcsvar /)
+        variabelvimfdcsvar                       := mergevimfdcsvarcp(0:0,:,:)
+        mergevimfdcsvar(i,:,:)          = variabelvimfdcsvar
       end do
       printVarSummary(mergevimfdcsvar)
 
@@ -389,13 +387,21 @@
       copy_VarMeta(mergevimfdcsavg, mergevimfdcsvar)
 
       printVarSummary(mergepwdtcsavg)
+      printMinMax(mergepwdtcsavg,0)
       printVarSummary(mergeiuqcsavg)
+      printMinMax(mergeiuqcsavg,0)
       printVarSummary(mergeivqcsavg)
+      printMinMax(mergeivqcsavg,0)
       printVarSummary(mergevimfdcsavg)
+      printMinMax(mergevimfdcsavg,0)
       printVarSummary(mergepwdtcsvar)
+      printMinMax(mergepwdtcsvar,0)
       printVarSummary(mergeiuqcsvar)
+      printMinMax(mergeiuqcsvar,0)
       printVarSummary(mergeivqcsvar)
+      printMinMax(mergeivqcsvar,0)
       printVarSummary(mergevimfdcsvar)
+      printMinMax(mergevimfdcsvar,0)
 
     end if
 
@@ -424,8 +430,7 @@
       time        = fvcens->timecens                                   ; "hours since 1800-1-1"
       time        = time*24*3600                                          
       time@units  = "seconds since 1800-1-1 00:00:0.0"
-      printVarSummary(time)
-      print(time)
+      ;printVarSummary(time)
       ;print("---")
       ymdh        = cd_calendar(time,-3)
       ;print(ymdh)
@@ -508,13 +513,13 @@
       end do
       printVarSummary(mergeivqcensavg)
 
-      mergevimfdcensavg                    = new((/nlag, nlat, nlon/), typeof(ivqcensavg[0]), ivqcensavg[0]@_FillValue)
-      mergevimfdcensavgcp                  = new((/nlag, nlat, nlon/), typeof(ivqcensavg[0]), ivqcensavg[0]@_FillValue)
+      mergevimfdcensavg                    = new((/nlag, nlat, nlon/), typeof(vimfdcensavg[0]), vimfdcensavg[0]@_FillValue)
+      mergevimfdcensavgcp                  = new((/nlag, nlat, nlon/), typeof(vimfdcensavg[0]), vimfdcensavg[0]@_FillValue)
       do i = 0, 20
-        variabelivqcensavg                        = ivqcensavg[i]
-        mergevimfdcensavgcp(0:0,:,:)      = (/ variabelivqcensavg /)
-        variabelivqcensavg                       := mergevimfdcensavgcp(0:0,:,:)
-        mergeivqcensavg(i,:,:)          = variabelivqcensavg
+        variabelvimfdcensavg                        = vimfdcensavg[i]
+        mergevimfdcensavgcp(0:0,:,:)      = (/ variabelvimfdcensavg /)
+        variabelvimfdcensavg                       := mergevimfdcensavgcp(0:0,:,:)
+        mergevimfdcensavg(i,:,:)          = variabelvimfdcensavg
       end do
       printVarSummary(mergevimfdcensavg)
 
@@ -548,13 +553,13 @@
       end do
       printVarSummary(mergeivqcensvar)
 
-      mergevimfdcensvar                    = new((/nlag, nlat, nlon/), typeof(ivqcensvar[0]), ivqcensvar[0]@_FillValue)
-      mergevimfdcensvarcp                  = new((/nlag, nlat, nlon/), typeof(ivqcensvar[0]), ivqcensvar[0]@_FillValue)
+      mergevimfdcensvar                    = new((/nlag, nlat, nlon/), typeof(vimfdcensvar[0]), vimfdcensvar[0]@_FillValue)
+      mergevimfdcensvarcp                  = new((/nlag, nlat, nlon/), typeof(vimfdcensvar[0]), vimfdcensvar[0]@_FillValue)
       do i = 0, 20
-        variabelivqcensvar                        = ivqcensvar[i]
-        mergevimfdcensvarcp(0:0,:,:)      = (/ variabelivqcensvar /)
-        variabelivqcensvar                       := mergevimfdcensvarcp(0:0,:,:)
-        mergeivqcensvar(i,:,:)          = variabelivqcensvar
+        variabelvimfdcensvar                        = vimfdcensvar[i]
+        mergevimfdcensvarcp(0:0,:,:)      = (/ variabelvimfdcensvar /)
+        variabelvimfdcensvar                       := mergevimfdcensvarcp(0:0,:,:)
+        mergevimfdcensvar(i,:,:)          = variabelvimfdcensvar
       end do
       printVarSummary(mergevimfdcensvar)
 
@@ -583,13 +588,21 @@
       copy_VarMeta(mergevimfdcensavg, mergevimfdcensvar)
 
       printVarSummary(mergepwdtcensavg)
+      printMinMax(mergepwdtcensavg,0)
       printVarSummary(mergeiuqcensavg)
+      printMinMax(mergeiuqcensavg,0)
       printVarSummary(mergeivqcensavg)
+      printMinMax(mergeivqcensavg,0)
       printVarSummary(mergevimfdcensavg)
+      printMinMax(mergevimfdcensavg,0)
       printVarSummary(mergepwdtcensvar)
+      printMinMax(mergepwdtcensvar,0)
       printVarSummary(mergeiuqcensvar)
+      printMinMax(mergeiuqcensvar,0)
       printVarSummary(mergeivqcensvar)
+      printMinMax(mergeivqcensvar,0)
       printVarSummary(mergevimfdcensvar)
+      printMinMax(mergevimfdcensvar,0)
 
     end if
 
