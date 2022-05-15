@@ -2,7 +2,7 @@
 ;+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++;
 ;                                                                                           ;
 ; Start code => Friday, 13 May 2022 - 12.39 WIB
-; Last time saved => Sat, 14 May 2022 - 08.57 WIB [done]
+; Last time saved => Sun, 15 May 2022 - 07.21 WIB [done]
 ;                                                                                           ;
 ;+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++;
 ;===========================================================================================;
@@ -281,7 +281,7 @@
     diri        = "../data/#/"
 
     CS          = False
-    CENS        = False
+    CENS        = True
     netCDF      = True
     npr         = 1            ; number of dimension level
     opt         = True
@@ -316,7 +316,7 @@
 
       ;---Convert "hours since ..." to "seconds since ..."
 
-      time        = fucs->time                                   ; "hours since 1800-1-1"
+      time        = fvcs->timecs                                   ; "hours since 1800-1-1"
       time        = time*24*3600                                          
       time@units  = "seconds since 1800-1-1 00:00:0.0"
       ;printVarSummary(time)
@@ -326,7 +326,7 @@
 
       ;---Convert hPa -> Pa for function
 
-      p           = fucs->lev
+      p           = fvcs->lev
       p           = p*100                                      ; Pa  [100000,...,10000]
       p@units     = "Pa"
       p!0         = "p"
@@ -401,13 +401,13 @@
       end do
       printVarSummary(mergeq1pcpcsavg)
 
-      mergeq2pcpcsavg                    = new((/nlag, nlev, nlat, nlon/), typeof(q1pcpcsavg[0]), q1pcpcsavg[0]@_FillValue)
-      mergeq2pcpcsavgcp                  = new((/nlag, nlev, nlat, nlon/), typeof(q1pcpcsavg[0]), q1pcpcsavg[0]@_FillValue)
+      mergeq2pcpcsavg                    = new((/nlag, nlev, nlat, nlon/), typeof(q2pcpcsavg[0]), q2pcpcsavg[0]@_FillValue)
+      mergeq2pcpcsavgcp                  = new((/nlag, nlev, nlat, nlon/), typeof(q2pcpcsavg[0]), q2pcpcsavg[0]@_FillValue)
       do i = 0, 20
-        variabelq1pcpcsavg                        = q1pcpcsavg[i]
-        mergeq2pcpcsavgcp(0:0,:,:,:)      = (/ variabelq1pcpcsavg /)
-        variabelq1pcpcsavg                       := mergeq2pcpcsavgcp(0:0,:,:,:)
-        mergeq1pcpcsavg(i,:,:,:)          = variabelq1pcpcsavg
+        variabelq2pcpcsavg                        = q2pcpcsavg[i]
+        mergeq2pcpcsavgcp(0:0,:,:,:)      = (/ variabelq2pcpcsavg /)
+        variabelq2pcpcsavg                       := mergeq2pcpcsavgcp(0:0,:,:,:)
+        mergeq2pcpcsavg(i,:,:,:)          = variabelq2pcpcsavg
       end do
       printVarSummary(mergeq2pcpcsavg)
 
@@ -441,13 +441,13 @@
       end do
       printVarSummary(mergeq1pcpcsvar)
 
-      mergeq2pcpcsvar                    = new((/nlag, nlev, nlat, nlon/), typeof(q1pcpcsvar[0]), q1pcpcsvar[0]@_FillValue)
-      mergeq2pcpcsvarcp                  = new((/nlag, nlev, nlat, nlon/), typeof(q1pcpcsvar[0]), q1pcpcsvar[0]@_FillValue)
+      mergeq2pcpcsvar                    = new((/nlag, nlev, nlat, nlon/), typeof(q2pcpcsvar[0]), q2pcpcsvar[0]@_FillValue)
+      mergeq2pcpcsvarcp                  = new((/nlag, nlev, nlat, nlon/), typeof(q2pcpcsvar[0]), q2pcpcsvar[0]@_FillValue)
       do i = 0, 20
-        variabelq1pcpcsvar                        = q1pcpcsvar[i]
-        mergeq2pcpcsvarcp(0:0,:,:,:)      = (/ variabelq1pcpcsvar /)
-        variabelq1pcpcsvar                       := mergeq2pcpcsvarcp(0:0,:,:,:)
-        mergeq1pcpcsvar(i,:,:,:)          = variabelq1pcpcsvar
+        variabelq2pcpcsvar                        = q2pcpcsvar[i]
+        mergeq2pcpcsvarcp(0:0,:,:,:)      = (/ variabelq2pcpcsvar /)
+        variabelq2pcpcsvar                       := mergeq2pcpcsvarcp(0:0,:,:,:)
+        mergeq2pcpcsvar(i,:,:,:)          = variabelq2pcpcsvar
       end do
       printVarSummary(mergeq2pcpcsvar)
 
@@ -480,8 +480,8 @@
       mergeq1intcsavg@units     = "W/m**2"
 
       copy_VarCoords(mergeq1intcsavg, mergeq2intcsavg)
-      mergeq2pcpcsavg@long_name = "<Q1>: Vertically Integrated Moisture Sink"
-      mergeq2pcpcsavg@units     = "W/m**2"
+      mergeq2intcsavg@long_name = "<Q1>: Vertically Integrated Moisture Sink"
+      mergeq2intcsavg@units     = "W/m**2"
 
       copy_VarMeta(mergeq1intcsavg, mergeq1intcsvar)
       copy_VarMeta(mergeq2intcsavg, mergeq2intcsvar)
@@ -496,6 +496,14 @@
       printVarSummary(mergeq2intcsvar)
       printVarSummary(mergeq1pcpcsvar)
       printVarSummary(mergeq2pcpcsvar)
+      printMinMax(mergeq1intcsavg,0)
+      printMinMax(mergeq2intcsavg,0)
+      printMinMax(mergeq1pcpcsavg,0)
+      printMinMax(mergeq2pcpcsavg,0)
+      printMinMax(mergeq1intcsvar,0)
+      printMinMax(mergeq2intcsvar,0)
+      printMinMax(mergeq1pcpcsvar,0)
+      printMinMax(mergeq2pcpcsvar,0)
 
     end if
 
@@ -526,7 +534,7 @@
 
       ;---Convert "hours since ..." to "seconds since ..."
 
-      time        = fucens->timecens                                   ; "hours since 1800-1-1"
+      time        = fvcens->timecens                                   ; "hours since 1800-1-1"
       time        = time*24*3600                                          
       time@units  = "seconds since 1800-1-1 00:00:0.0"
       ;printVarSummary(time)
@@ -536,7 +544,7 @@
 
       ;---Convert hPa -> Pa for function
 
-      p           = fucens->lev
+      p           = fvcens->lev
       p           = p*100                                      ; Pa  [100000,...,10000]
       p@units     = "Pa"
       p!0         = "p"
@@ -611,13 +619,13 @@
       end do
       printVarSummary(mergeq1pcpcensavg)
 
-      mergeq2pcpcensavg                    = new((/nlag, nlev, nlat, nlon/), typeof(q1pcpcensavg[0]), q1pcpcensavg[0]@_FillValue)
-      mergeq2pcpcensavgcp                  = new((/nlag, nlev, nlat, nlon/), typeof(q1pcpcensavg[0]), q1pcpcensavg[0]@_FillValue)
+      mergeq2pcpcensavg                    = new((/nlag, nlev, nlat, nlon/), typeof(q2pcpcensavg[0]), q2pcpcensavg[0]@_FillValue)
+      mergeq2pcpcensavgcp                  = new((/nlag, nlev, nlat, nlon/), typeof(q2pcpcensavg[0]), q2pcpcensavg[0]@_FillValue)
       do i = 0, 20
-        variabelq1pcpcensavg                        = q1pcpcensavg[i]
-        mergeq2pcpcensavgcp(0:0,:,:,:)      = (/ variabelq1pcpcensavg /)
-        variabelq1pcpcensavg                       := mergeq2pcpcensavgcp(0:0,:,:,:)
-        mergeq1pcpcensavg(i,:,:,:)          = variabelq1pcpcensavg
+        variabelq2pcpcensavg                        = q2pcpcensavg[i]
+        mergeq2pcpcensavgcp(0:0,:,:,:)      = (/ variabelq2pcpcensavg /)
+        variabelq2pcpcensavg                       := mergeq2pcpcensavgcp(0:0,:,:,:)
+        mergeq2pcpcensavg(i,:,:,:)          = variabelq2pcpcensavg
       end do
       printVarSummary(mergeq2pcpcensavg)
 
@@ -651,16 +659,15 @@
       end do
       printVarSummary(mergeq1pcpcensvar)
 
-      mergeq2pcpcensvar                    = new((/nlag, nlev, nlat, nlon/), typeof(q1pcpcensvar[0]), q1pcpcensvar[0]@_FillValue)
-      mergeq2pcpcensvarcp                  = new((/nlag, nlev, nlat, nlon/), typeof(q1pcpcensvar[0]), q1pcpcensvar[0]@_FillValue)
+      mergeq2pcpcensvar                    = new((/nlag, nlev, nlat, nlon/), typeof(q2pcpcensvar[0]), q2pcpcensvar[0]@_FillValue)
+      mergeq2pcpcensvarcp                  = new((/nlag, nlev, nlat, nlon/), typeof(q2pcpcensvar[0]), q2pcpcensvar[0]@_FillValue)
       do i = 0, 20
-        variabelq1pcpcensvar                        = q1pcpcensvar[i]
-        mergeq2pcpcensvarcp(0:0,:,:,:)      = (/ variabelq1pcpcensvar /)
-        variabelq1pcpcensvar                       := mergeq2pcpcensvarcp(0:0,:,:,:)
-        mergeq1pcpcensvar(i,:,:,:)          = variabelq1pcpcensvar
+        variabelq2pcpcensvar                        = q2pcpcensvar[i]
+        mergeq2pcpcensvarcp(0:0,:,:,:)      = (/ variabelq2pcpcensvar /)
+        variabelq2pcpcensvar                       := mergeq2pcpcensvarcp(0:0,:,:,:)
+        mergeq2pcpcensvar(i,:,:,:)          = variabelq2pcpcensvar
       end do
       printVarSummary(mergeq2pcpcensvar)
-
 
       mergeq1pcpcensavg!0 = "timelag"
       mergeq1pcpcensavg!1 = "lev"
@@ -691,8 +698,8 @@
       mergeq1intcensavg@units     = "W/m**2"
 
       copy_VarCoords(mergeq1intcensavg, mergeq2intcensavg)
-      mergeq2pcpcensavg@long_name = "<Q1>: Vertically Integrated Moisture Sink"
-      mergeq2pcpcensavg@units     = "W/m**2"
+      mergeq2intcensavg@long_name = "<Q1>: Vertically Integrated Moisture Sink"
+      mergeq2intcensavg@units     = "W/m**2"
 
       copy_VarMeta(mergeq1intcensavg, mergeq1intcensvar)
       copy_VarMeta(mergeq2intcensavg, mergeq2intcensvar)
@@ -707,6 +714,14 @@
       printVarSummary(mergeq2intcensvar)
       printVarSummary(mergeq1pcpcensvar)
       printVarSummary(mergeq2pcpcensvar)
+      printMinMax(mergeq1intcensavg,0)
+      printMinMax(mergeq2intcensavg,0)
+      printMinMax(mergeq1pcpcensavg,0)
+      printMinMax(mergeq2pcpcensavg,0)
+      printMinMax(mergeq1intcensvar,0)
+      printMinMax(mergeq2intcensvar,0)
+      printMinMax(mergeq1pcpcensvar,0)
+      printMinMax(mergeq2pcpcensvar,0)
 
     end if
 
@@ -715,8 +730,8 @@
   ;;------------------------------------------------------------------------------------------;
 
   if (netCDF) .and. (CS)
-    diro = "./"
-    filo = "YANAI_Q1Q2_CS.nc"
+    diro = "../data/#/"
+    filo = "var_YANAI_Q1Q2_CS.nc"
     ptho = diro+filo
     system("/bin/rm -f "+ptho)
     ncdf = addfile(ptho,"c")
@@ -743,8 +758,8 @@
   end if
 
   if (netCDF) .and. (CENS)
-    diro = "./"
-    filo = "YANAI_Q1Q2_CENS.nc"
+    diro = "../data/#/"
+    filo = "var_YANAI_Q1Q2_CENS.nc"
     ptho = diro+filo
     system("/bin/rm -f "+ptho)
     ncdf = addfile(ptho,"c")
