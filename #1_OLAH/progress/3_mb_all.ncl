@@ -299,16 +299,16 @@ begin
         fileattdef(ncdf,fAtt)             ; copy file attributes
        
         filedimdef(ncdf,"time",-1,True)   ; make time an UNLIMITED dimension
-        ncdf->dqdt        = dqdt
-        ncdf->pwdt        = pwdt
-        ncdf->uq          = uq
-        ncdf->vq          = vq
-        ncdf->iuq         = iuq
-        ncdf->ivq         = ivq
-        ncdf->mfd         = mfd
-        ncdf->vimfd       = vimfd
-        ncdf->dwq         = dwq
-        ncdf->idwq        = idwq
+        ncdf->dqdt        = dqdt*4*1000
+        ncdf->pwdt        = pwdt*4*1000
+        ncdf->uq          = uq*4*1000
+        ncdf->vq          = vq*4*1000
+        ncdf->iuq         = iuq*4*1000
+        ncdf->ivq         = ivq*4*1000
+        ncdf->mfd         = mfd*4*1000
+        ncdf->vimfd       = vimfd*4*1000
+        ncdf->dwq         = dwq*4*1000
+        ncdf->idwq        = idwq*4*1000
     end if
 
   finish = systemfunc("date")

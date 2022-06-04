@@ -129,16 +129,16 @@
       
     ;-Vertically Integrated Horizontal Moisture flux
 
-      uq_dpg          = uq*dpgq                         ; mass weighted 'uq'; [m/s][kg/kg][kg/m2]=>[m/s][g/kg]
-      iuq             = dim_sum_n(uq_dpg, 1)
+      uq_dpg          = conform(uq,dpg,1)                         ; mass weighted 'uq'; [m/s][kg/kg][kg/m2]=>[m/s][g/kg]
+      iuq             = wgt_vertical_n(uq,uq_dpg,vopt,1)
       iuq@long_name   = "Integrated Zonal UQ [uq*dpg]" 
       iuq@LONG_NAME   = "Sum: Mass Weighted Integrated Zonal Moisture Flux [uq*dpg]" 
       iuq@units       = "[m/s][kg/kg]"
       copy_VarCoords(u(:,0,:,:), iuq)                ; (time,lat,lon)
       delete(uq_dpg)
 
-      vq_dpg          = vq*dpgq                         ; mass weighted 'vq'; [m/s][g/kg][kg/m2]=>[m/s][g/kg] 
-      ivq             = dim_sum_n(vq_dpg, 1)
+      vq_dpg          = conform(vq,dpg,1)                         ; mass weighted 'uq'; [m/s][kg/kg][kg/m2]=>[m/s][g/kg]
+      ivq             = wgt_vertical_n(vq,vq_dpg,vopt,1)
       ivq@long_name   = "Integrated Meridional VQ [vq*dpg]" 
       ivq@LONG_NAME   = "Sum: Mass Weighted Integrated Meridional Moisture Flux [vq*dpg]" 
       ivq@units       = "[m/s][kg/kg]"
@@ -147,8 +147,8 @@
       
     ;-Vertically Integrated Horizontal Moisture flux Divergence
 
-      mfd_dpg        = mfd*dpgq                         ;  [g/(kg-s)][kg/m2] => [g/(m2-s)]
-      imfd           = dim_sum_n(mfd_dpg, 1)
+      mfd_dpg          = conform(mfd,dpg,1)                         ; mass weighted 'uq'; [m/s][kg/kg][kg/m2]=>[m/s][g/kg]
+      imfd             = wgt_vertical_n(mfd,mfd_dpg,vopt,1)
       imfd@long_name = "Integrated Mass Wgt MFD" 
       imfd@LONG_NAME = "Integrated Mass Weighted Moisture Flux Divergence" 
       imfd@units     = "(kg/m**2)/s"
@@ -198,8 +198,8 @@
 
     diri        = "../data/#/"
 
-    CS          = False
-    CENS        = True
+    CS          = True
+    CENS        = False
     netCDF      = True
     npr         = 1            ; number of dimension level
     opt         = True
@@ -612,7 +612,7 @@
 
     if (netCDF) .and. (CS)
       diro                = "./"
-      filo                = "moisture_budget_cs.nc"
+      filo                = "var_moisture_budget_cs.nc"
       ptho                = diro+filo
       system("/bin/rm -f "+ptho)
       ncdf                = addfile(ptho,"c")
@@ -639,7 +639,7 @@
 
     if (netCDF) .and. (CENS)
       diro                = "./"
-      filo                = "moisture_budget_cens.nc"
+      filo                = "var_moisture_budget_cens.nc"
       ptho                = diro+filo
       system("/bin/rm -f "+ptho)
       ncdf                = addfile(ptho,"c")

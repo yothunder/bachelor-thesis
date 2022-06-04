@@ -626,7 +626,7 @@ begin
       fAtt@creation_date  = systemfunc("date")
       fileattdef(ncdf,fAtt)             ; copy file attributes
      
-      filedimdef(ncdf,"time",-1,True)   ; make time an UNLIMITED dimension
+      filedimdef(ncdf,"timelag",-1,True)   ; make time an UNLIMITED dimension
       ncdf->ucsmean   = ucs[0]
       ncdf->ucsdiff   = ucs[1]
       ncdf->ucspval   = ucs[2]
@@ -656,7 +656,7 @@ begin
       fAtt@creation_date  = systemfunc("date")
       fileattdef(ncdf,fAtt)             ; copy file attribssttes
      
-      filedimdef(ncdf,"time",-1,True)   ; make time an UNLIMITED dimension
+      filedimdef(ncdf,"timelag",-1,True)   ; make time an UNLIMITED dimension
       ncdf->sstcsmean   = sstcs[0]
       ncdf->sstcsdiff   = sstcs[1]
       ncdf->sstcspval   = sstcs[2]
@@ -679,7 +679,7 @@ begin
       fAtt@creation_date  = systemfunc("date")
       fileattdef(ncdf,fAtt)             ; copy file attributes
      
-      filedimdef(ncdf,"time",-1,True)   ; make time an UNLIMITED dimension
+      filedimdef(ncdf,"timelag",-1,True)   ; make time an UNLIMITED dimension
       ncdf->sshfcsmean   = sshfcs[0]
       ncdf->sshfcsdiff   = sshfcs[1]
       ncdf->sshfcspval   = sshfcs[2]
@@ -737,7 +737,7 @@ begin
       fAtt@creation_date  = systemfunc("date")
       fileattdef(ncdf,fAtt)             ; copy file attributes
      
-      filedimdef(ncdf,"time",-1,True)   ; make time an UNLIMITED dimension
+      filedimdef(ncdf,"timelag",-1,True)   ; make time an UNLIMITED dimension
       ncdf->ecsmean   = ecs[0]
       ncdf->ecsdiff   = ecs[1]
       ncdf->ecspval   = ecs[2]

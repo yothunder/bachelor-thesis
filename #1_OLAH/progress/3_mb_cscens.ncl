@@ -426,49 +426,49 @@ begin
       fileattdef(ncdf,fAtt)             ; copy file attributes
      
       filedimdef(ncdf,"time",-1,True)   ; make time an UNLIMITED dimension
-      ncdf->dqdtcsmean        = dqdtcsmean
-      ncdf->pwdtcsmean        = pwdtcsmean
-	    ncdf->uqcsmean          = uqcsmean
-	    ncdf->vqcsmean          = vqcsmean
-	    ncdf->iuqcsmean         = iuqcsmean
-      ncdf->ivqcsmean         = ivqcsmean
-      ncdf->mfdcsmean         = mfdcsmean
-      ncdf->vimfdcsmean       = vimfdcsmean
-      ncdf->dwqcsmean         = dwqcsmean
-      ncdf->idwqcsmean        = idwqcsmean
+      ncdf->dqdtcsmean        = dqdtcsmean*4*1000
+      ncdf->pwdtcsmean        = pwdtcsmean*4*1000
+	    ncdf->uqcsmean          = uqcsmean*4*1000
+	    ncdf->vqcsmean          = vqcsmean*4*1000
+	    ncdf->iuqcsmean         = iuqcsmean*4*1000
+      ncdf->ivqcsmean         = ivqcsmean*4*1000
+      ncdf->mfdcsmean         = mfdcsmean*4*1000
+      ncdf->vimfdcsmean       = vimfdcsmean*4*1000
+      ncdf->dwqcsmean         = dwqcsmean*4*1000
+      ncdf->idwqcsmean        = idwqcsmean*4*1000
 
-      ncdf->dqdtcensmean      = dqdtcensmean
-      ncdf->pwdtcensmean      = pwdtcensmean
-      ncdf->uqcensmean        = uqcensmean
-      ncdf->vqcensmean        = vqcensmean
-      ncdf->iuqcensmean       = iuqcensmean
-      ncdf->ivqcensmean       = ivqcensmean
-      ncdf->mfdcensmean       = mfdcensmean
-      ncdf->vimfdcensmean     = vimfdcensmean
-      ncdf->dwqcensmean       = dwqcensmean
-      ncdf->idwqcensmean      = idwqcensmean
+      ncdf->dqdtcensmean      = dqdtcensmean*4*1000
+      ncdf->pwdtcensmean      = pwdtcensmean*4*1000
+      ncdf->uqcensmean        = uqcensmean*4*1000
+      ncdf->vqcensmean        = vqcensmean*4*1000
+      ncdf->iuqcensmean       = iuqcensmean*4*1000
+      ncdf->ivqcensmean       = ivqcensmean*4*1000
+      ncdf->mfdcensmean       = mfdcensmean*4*1000
+      ncdf->vimfdcensmean     = vimfdcensmean*4*1000
+      ncdf->dwqcensmean       = dwqcensmean*4*1000
+      ncdf->idwqcensmean      = idwqcensmean*4*1000
 
-      ncdf->dqdtcsvari        = dqdtcsvari
-      ncdf->pwdtcsvari        = pwdtcsvari
-      ncdf->uqcsvari          = uqcsvari
-      ncdf->vqcsvari          = vqcsvari
-      ncdf->iuqcsvari         = iuqcsvari
-      ncdf->ivqcsvari         = ivqcsvari
-      ncdf->mfdcsvari         = mfdcsvari
-      ncdf->vimfdcsvari       = vimfdcsvari
-      ncdf->dwqcsvari         = dwqcsvari
-      ncdf->idwqcsvari        = idwqcsvari
+      ncdf->dqdtcsvari        = dqdtcsvari*4*1000
+      ncdf->pwdtcsvari        = pwdtcsvari*4*1000
+      ncdf->uqcsvari          = uqcsvari*4*1000
+      ncdf->vqcsvari          = vqcsvari*4*1000
+      ncdf->iuqcsvari         = iuqcsvari*4*1000
+      ncdf->ivqcsvari         = ivqcsvari*4*1000
+      ncdf->mfdcsvari         = mfdcsvari*4*1000
+      ncdf->vimfdcsvari       = vimfdcsvari*4*1000
+      ncdf->dwqcsvari         = dwqcsvari*4*1000
+      ncdf->idwqcsvari        = idwqcsvari*4*1000
 
-      ncdf->dqdtcensvari      = dqdtcensvari
-      ncdf->pwdtcensvari      = pwdtcensvari
-      ncdf->uqcensvari        = uqcensvari
-      ncdf->vqcensvari        = vqcensvari
-      ncdf->iuqcensvari       = iuqcensvari
-      ncdf->ivqcensvari       = ivqcensvari
-      ncdf->mfdcensvari       = mfdcensvari
-      ncdf->vimfdcensvari     = vimfdcensvari
-      ncdf->dwqcensvari       = dwqcensvari
-      ncdf->idwqcensvari      = idwqcensvari
+      ncdf->dqdtcensvari      = dqdtcensvari*4*1000
+      ncdf->pwdtcensvari      = pwdtcensvari*4*1000
+      ncdf->uqcensvari        = uqcensvari*4*1000
+      ncdf->vqcensvari        = vqcensvari*4*1000
+      ncdf->iuqcensvari       = iuqcensvari*4*1000
+      ncdf->ivqcensvari       = ivqcensvari*4*1000
+      ncdf->mfdcensvari       = mfdcensvari*4*1000
+      ncdf->vimfdcensvari     = vimfdcensvari*4*1000
+      ncdf->dwqcensvari       = dwqcensvari*4*1000
+      ncdf->idwqcensvari      = idwqcensvari*4*1000
     end if
 
   finish = systemfunc("date")
