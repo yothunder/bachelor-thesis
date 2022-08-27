@@ -17,15 +17,15 @@ Proses pelembapan CS dianalisis berdasarkan transfer energi dari laut ke atmosfe
 ### Data & alat
 Penelitian ini sepenuhnya menggunakan data ECMWF *reanalysis v5*[^3].
 1. *Single level* : per enam jam (00, 06, 12, 18 UTC)
-   1. total precipitation ($P$)
-   2. evaporation ($E$)
+   1. total precipitation $(P)$
+   2. evaporation $(E)$
    3. surface latent heat flux (SLHF)
    4. surface sensible heat flux (SSHF)
 2. *Pressure level* (1000-100 mb) : per enam jam (00, 06, 12, 18 UTC)
-   1. temperature ($T$)
-   2. specific humidity ($q$)
-   3. horizontal wind component ($u$ & $v$)
-   4. vertical velocity ($w$)
+   1. temperature $(T)$
+   2. specific humidity $(q)$
+   3. horizontal wind component $(u, v)$
+   4. vertical velocity $(w)$
 
 Data diolah menggunakan CDO (untuk preprocessing), NCL (alat utama), *spreadsheet* (untuk identifikasi CS & CENS[^4]), dan GrADS (untuk visualisasi).
 
@@ -42,9 +42,7 @@ Data beresolusi enam jam dirata-ratakan menjadi harian menggunakan CDO, memanfaa
     
 
 #### 2. Mengidentifikasi CS dan CENS[^4] : `(2) NCL` & `(3) Spreadsheet`
-Rata-rata angin meridional ($v$) lapisan 925 mb di area 110-116⁰BT dan 8-15⁰LU (105-110⁰BT dan 5⁰LS-0) digunakan untuk mengidentifikasi CS (CENS) -yang kemudian dinamakan sebagai indeks CS dan CENS. 
-
-Nilai $v$ tersebut diekstrak menggunakan NCL dengan memanfaatkan perintah [`wgt_areaave`](https://www.ncl.ucar.edu/Document/Functions/Built-in/wgt_areaave.shtml).
+Rata-rata angin meridional $(v)$ lapisan 925 mb di area 110-116⁰BT dan 8-15⁰LU (105-110⁰BT dan 5⁰LS-0) digunakan untuk mengidentifikasi CS (CENS) -yang kemudian dinamakan sebagai indeks CS dan CENS. Nilai $v$ tersebut diekstrak menggunakan NCL dengan memanfaatkan perintah [`wgt_areaave`](https://www.ncl.ucar.edu/Document/Functions/Built-in/wgt_areaave.shtml).
 
 CS dan CENS kemudian diidentifikasi secara manual menggunakan *spreadsheet*, aktif apabila nilai indeksnya lebih dari 8 m/s (5 m/s) yang persisten selama enam (empat) hari berturut-turut[^5]. Nilai tertinggi dalam satu episode tersebut kemudian ditandai sebagai H0.
 
