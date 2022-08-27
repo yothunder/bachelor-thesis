@@ -33,10 +33,13 @@ Jelaskan bagaimana alur secara runutnya
 |  Penguji 2  | Imma Redha Nugraheni, M.Si. |
 | | |
 
+*The complete contents in this repository are under progres.
 
 Referensi
 [^1]: (Chang dkk., 2016 dan Yoden, dkk., 2017)
 [^2]: Data dapat diakses melalui pranala berikut
+    
     single level : https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels
+    
     multi/pressure level : https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-pressure-levels
-*The complete contents in this repository are under progres.
+
