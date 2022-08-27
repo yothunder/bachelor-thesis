@@ -27,7 +27,7 @@ Penelitian ini sepenuhnya menggunakan data ECMWF *reanalysis v5*[^3].
    3. horizontal wind component ($u$ & $v$)
    4. vertical velocity ($w$)
 
-Data diolah menggunakan CDO (untuk preprocessing), NCL (alat utama), Spreadsheet (untuk identifikasi CS & CENS[^4]), dan GrADS (untuk visualisasi).
+Data diolah menggunakan CDO (untuk preprocessing), NCL (alat utama), *spreadsheet* (untuk identifikasi CS & CENS[^4]), dan GrADS (untuk visualisasi).
 
 ### Alur pengolahan data
 
@@ -35,23 +35,28 @@ Data diolah menggunakan CDO (untuk preprocessing), NCL (alat utama), Spreadsheet
 |:--:|
 |  *Diagram alir pengolahan data*  |
 
-#### 1. Pre-processing : (1) CDO
+#### 1. Pre-processing : `(1) CDO`
 Data beresolusi enam jam dirata-ratakan menjadi harian menggunakan CDO, memanfaatkan perintah `daymean`.
 
     daymean inputfile.nc outputfile.nc
     
 
-#### 2. Mengidentifikasi CS dan CENS[^4] : (2) NCL & (3) Spreadsheet
+#### 2. Mengidentifikasi CS dan CENS[^4] : `(2) NCL` & `(3) Spreadsheet`
+Rata-rata angin meridional ($v$) lapisan 925 mb di area 110-116⁰BT dan 8-15⁰LU (105-110⁰BT dan 5⁰LS-0) digunakan untuk mengidentifikasi CS (CENS) -yang kemudian dinamakan sebagai indeks CS dan CENS. 
 
-#### 3. Menyeleksi data : (4) NCL
+Nilai $v$ tersebut diekstrak menggunakan NCL dengan memanfaatkan perintah [`wgt_areaave`](https://www.ncl.ucar.edu/Document/Functions/Built-in/wgt_areaave.shtml).
 
-#### 4. Mendefinisikan variabel : (5) NCL & (6) NCL
+CS dan CENS kemudian diidentifikasi secara manual menggunakan *spreadsheet*, aktif apabila nilai indeksnya lebih dari 8 m/s (5 m/s) yang persisten selama enam (empat) hari berturut-turut[^5]. Nilai tertinggi dalam satu episode tersebut kemudian ditandai sebagai H0.
 
-#### 5. Melakukan uji signifikansi : (7) NCL
+#### 3. Menyeleksi data : `(4) NCL`
 
-#### 6. Post-processing : (8) NCL
+#### 4. Mendefinisikan variabel : `(5) NCL` & `(6) NCL`
 
-#### 7. Visualisasi : (9) NCL
+#### 5. Melakukan uji signifikansi : `(7) NCL`
+
+#### 6. Post-processing : `(8) NCL`
+
+#### 7. Visualisasi : `(9) NCL`
 
 
 
@@ -77,3 +82,4 @@ Jelaskan bagaimana alur secara runutnya
     multi/pressure level : https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-pressure-levels
 
 [^4]: CENS = *cross equatorial northerly surge*, CS yang berpropagasi hingga melintasi garis ekuator.
+[^5]: (Chang, dkk., 2005 dan Hattori, dkk., 2011)
