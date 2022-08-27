@@ -42,7 +42,7 @@ Data beresolusi enam jam dirata-ratakan menjadi harian menggunakan CDO, memanfaa
     
 
 #### 2. Mengidentifikasi CS dan CENS[^4] : `(2) NCL` & `(3) Spreadsheet`
-Rata-rata angin meridional $(v)$ lapisan 925 mb di area 110-116⁰BT dan 8-15⁰LU (105-110⁰BT dan 5⁰LS-0) digunakan untuk mengidentifikasi CS (CENS) -yang kemudian dinamakan sebagai indeks CS dan CENS. Nilai $v$ tersebut diekstrak menggunakan NCL dengan memanfaatkan perintah [`wgt_areaave`](https://www.ncl.ucar.edu/Document/Functions/Built-in/wgt_areaave.shtml).
+Rata-rata angin meridional $(v)$ lapisan 925 mb di area 110-116⁰BT dan 8-15⁰LU (105-110⁰BT dan 5⁰LS-0) digunakan untuk mengidentifikasi CS (CENS) -yang kemudian dinamakan sebagai indeks CS dan CENS. Nilai $v$ tersebut diekstrak menggunakan NCL dengan memanfaatkan perintah <a href="https://www.ncl.ucar.edu/Document/Functions/Built-in/wgt_areaave.shtml" target="_blank">`wgt_areaave`</a>
 
 CS dan CENS kemudian diidentifikasi secara manual menggunakan *spreadsheet*, aktif apabila nilai indeksnya lebih dari 8 m/s (5 m/s) yang persisten selama enam (empat) hari berturut-turut[^5]. Nilai tertinggi dalam satu episode tersebut kemudian ditandai sebagai H0.
 
