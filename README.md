@@ -1,4 +1,4 @@
-Repositori ini berisi gambaran singkat mengenai satu skripsi berikut dengan alur pengolahan datanya.
+Repositori ini berisi gambaran singkat mengenai satu skripsi berikut dengan alur pengolahan datanya[^1].
 
 # Proses pelembapan *cold surge* serta pengaruhnya terhadap *budget* uap air di Benua Maritim Bagian Barat
 
@@ -6,7 +6,7 @@ Repositori ini berisi gambaran singkat mengenai satu skripsi berikut dengan alur
 
 Oleh karena pengaruhnya yang cukup signifikan di wilayah Indonesia, maka studi mengenai CS menjadi penting untuk terus dilakukan baik dalam perspektif kajian dinamis, fisis, maupun termodinamisnya. 
 
-Proses dinamis fenomena CS berikut dampak yang ditimbulkan di daerah tropis dan subtropis hingga lintang tinggi serta interaksinya dengan fenomena lain telah dipahami dengan cukup komprehensif. Namun, proses fisis dan termodinamis dari propagasi CS di Benua Maritim khususnya di bagian barat belum dipahami secara lebih mendalam [^1].
+Proses dinamis fenomena CS berikut dampak yang ditimbulkan di daerah tropis dan subtropis hingga lintang tinggi serta interaksinya dengan fenomena lain telah dipahami dengan cukup komprehensif. Namun, proses fisis dan termodinamis dari propagasi CS di Benua Maritim khususnya di bagian barat belum dipahami secara lebih mendalam [^2].
 
 Oleh karena itu, penelitian ini mencoba untuk mengkaji hal tersebut dengan fokus utamanya pada proses pelembapan (transformasi massa udara) massa udara CS serta pengaruh dari propagasi CS terhadap *budget* uap air di Benua Maritim Bagian Barat.
 
@@ -14,18 +14,52 @@ Oleh karena itu, penelitian ini mencoba untuk mengkaji hal tersebut dengan fokus
 ## Metode penelitian
 Proses pelembapan CS dianalisis berdasarkan transfer energi dari laut ke atmosfer beserta dengan proses pada kolom vertikal atmosfer. Sementara itu, *budget* uap air dianalisis berdasarkan keseimbangan antara evaporasi minus presipitasi dengan kecenderungan *precipitable water* dan konvergensi transpor uap air.
 
-### Data
-Penelitian ini sepenuhnya menggunakan data ECMWF *reanalysis v5*[^2]
+### Data & alat
+Penelitian ini sepenuhnya menggunakan data ECMWF *reanalysis v5*[^3].
+1. *Single level* : per enam jam (00, 06, 12, 18 UTC)
+   1. total precipitation ($P$)
+   2. evaporation ($E$)
+   3. surface latent heat flux (SLHF)
+   4. surface sensible heat flux (SSHF)
+2. *Pressure level* (1000-100 mb) : per enam jam (00, 06, 12, 18 UTC)
+   1. temperature ($T$)
+   2. specific humidity ($q$)
+   3. horizontal wind component ($u$ & $v$)
+   4. vertical velocity ($w$)
+
+Data diolah menggunakan CDO (untuk preprocessing), NCL (alat utama), Spreadsheet (untuk identifikasi CS & CENS[^4]), dan GrADS (untuk visualisasi).
 
 ### Alur pengolahan data
 
-|  ![Diagram alir pengolahan data](diagram/detilolahdata.png "Diagram alir kerangka berpikir")  |
+|  ![Diagram alir pengolahan data](diagram/detilolahdata.png)  |
 |:--:|
 |  *Diagram alir pengolahan data*  |
 
+#### 1. Pre-processing : (1) CDO
+Data beresolusi enam jam dirata-ratakan menjadi harian menggunakan CDO. 
+
+    `daymean inputfile.nc outputfile.nc`
+
+>`daymean inputfile.nc outputfile.nc`
+    
+
+#### 2. Mengidentifikasi CS dan CENS[^4] : (2) NCL & (3) Spreadsheet
+
+#### 3. Menyeleksi data : (4) NCL
+
+#### 4. Mendefinisikan variabel : (5) NCL & (6) NCL
+
+#### 5. Melakukan uji signifikansi : (7) NCL
+
+#### 6. Post-processing : (8) NCL
+
+#### 7. Visualisasi : (9) NCL
+
+
+
 Jelaskan bagaimana alur secara runutnya
 
-| | |
+| Info | |
 |----|----|
 |  Penulis  |  Suwignyo Prasetyo  |
 |  Pembimbing  |  Dr. Yosafat D. Haryanto, M.Si.  |
@@ -33,13 +67,15 @@ Jelaskan bagaimana alur secara runutnya
 |  Penguji 2  | Imma Redha Nugraheni, M.Si. |
 | | |
 
-*The complete contents in this repository are under progres.
+>The complete contents at this repository are under progres.
 
-Referensi
-[^1]: (Chang dkk., 2016 dan Yoden, dkk., 2017)
-[^2]: Data dapat diakses melalui pranala berikut
+## Referensi
+[^1]: Naskah skripsi lengkap dapat diakses melalui pranala berikut *[otw]*
+[^2]: (Chang dkk., 2016 dan Yoden, dkk., 2017)
+[^3]: Data dapat diakses secara bebas melalui pranala berikut
     
     single level : https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels
     
     multi/pressure level : https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-pressure-levels
 
+[^4]: CENS = *cross equatorial northerly surge*, CS yang berpropagasi hingga melintasi garis ekuator.
