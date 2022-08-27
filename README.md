@@ -37,6 +37,7 @@ Data diolah menggunakan CDO (untuk preprocessing), NCL (alat utama), Spreadsheet
 
 #### 1. Pre-processing : (1) CDO
 Data beresolusi enam jam dirata-ratakan menjadi harian menggunakan CDO. 
+
 `daymean inputfile.nc outputfile.nc`
 
     `daymean inputfile.nc outputfile.nc`
