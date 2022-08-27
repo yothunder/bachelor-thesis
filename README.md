@@ -36,13 +36,9 @@ Data diolah menggunakan CDO (untuk preprocessing), NCL (alat utama), Spreadsheet
 |  *Diagram alir pengolahan data*  |
 
 #### 1. Pre-processing : (1) CDO
-Data beresolusi enam jam dirata-ratakan menjadi harian menggunakan CDO. 
+Data beresolusi enam jam dirata-ratakan menjadi harian menggunakan CDO, memanfaatkan perintah `daymean`.
 
-`daymean inputfile.nc outputfile.nc`
-
-    `daymean inputfile.nc outputfile.nc`
-
->`daymean inputfile.nc outputfile.nc`
+    daymean inputfile.nc outputfile.nc
     
 
 #### 2. Mengidentifikasi CS dan CENS[^4] : (2) NCL & (3) Spreadsheet
